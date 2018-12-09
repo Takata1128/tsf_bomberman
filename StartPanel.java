@@ -1,0 +1,3 @@
+class StartPanel extends JPanel{
+
+}
