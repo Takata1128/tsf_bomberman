@@ -56,7 +56,7 @@ public class Map implements Common {
 
     public boolean isHit(int x, int y) {
         // (x,y)に壁があったらぶつかる
-        if (map[y][x] == 1) {
+        if (map[y][x] != 0) {
             return true;
         }
 

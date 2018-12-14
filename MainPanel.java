@@ -16,7 +16,7 @@ class MainPanel extends JPanel{
     	setPreferredSize(new Dimension(WIDTH,HEIGHT));
 			map = new Map(this);
 			controller = new KeyController();
-			p1 = new Player(1,1,"image/hero.gif",map,this,controller);
+			p1 = new Player(1,1,"image/Bomberman.png",map,this,controller);
 			setFocusable(true);
 			addKeyListener(controller);
 	  }
