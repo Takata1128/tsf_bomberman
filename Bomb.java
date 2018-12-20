@@ -5,7 +5,7 @@ class Bomb{
   private static int resttime = 3;//爆発までの時間
   private Map map;//マップ
   private MainPanel panel;//パネル
-  public void Bomb(int x,int y,int power,Map map,Mainpanel panel){
+  public void Bomb(int x,int y,int power,Map map,MainPanel panel){
     this.x = x;
     this.y = y;
     this.power = power;

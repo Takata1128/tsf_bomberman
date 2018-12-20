@@ -31,9 +31,9 @@ public class Map implements Common {
     private Image wallImage;
 
     // メインパネルへの参照
-    private MainPanel panel;
+    private GamePanel panel;
 
-    public Map(MainPanel panel) {
+    public Map(GamePanel panel) {
         // イメージをロード
         loadImage();
     }

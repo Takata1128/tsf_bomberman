@@ -11,10 +11,10 @@ class Player implements Observer,Common{
     private int count;
     private Thread threadAnime;
     private Map map;
-    private MainPanel panel;
+    private GamePanel panel;
     private KeyController Controller;
 
-    public Player(int x,int y,String filename,Map map,MainPanel panel,KeyController kc){
+    public Player(int x,int y,String filename,Map map,GamePanel panel,KeyController kc){
       this.x = x;
       this.y = y;
 
@@ -54,8 +54,6 @@ class Player implements Observer,Common{
                 direction = DOWN;
                 break;
         }
-
-        System.out.println("direction: "+direction);
         panel.repaint();
     }
     public void draw(Graphics g){

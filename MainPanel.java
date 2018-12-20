@@ -1,5 +1,8 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
+import java.applet.*;
+import java.net.*;
 import java.awt.event.KeyListener;
 
 class MainPanel extends JPanel implements Runnable{
@@ -11,26 +14,17 @@ class MainPanel extends JPanel implements Runnable{
 	private Player p1;
 	private KeyController controller;
 	private Thread gameLoop;
+	private GamePanel gp;
 
     public MainPanel(){
     	//パネルの推奨サイズを設定
-    	setPreferredSize(new Dimension(WIDTH,HEIGHT));
-			map = new Map(this);//マップ生成
-			controller = new KeyController();//キーコントローラー生成
-			p1 = new Player(1,1,"image/Bomberman.png",map,this,controller);//プレイヤー生成
-			gameLoop = new Thread(this);
-			gameLoop.start();
-			setFocusable(true);
-			addKeyListener(controller);
+		setPreferredSize(new Dimension(WIDTH,HEIGHT));
+		setLayout(new GridLayout(1, 1, 0, 0));
+		gp = new GamePanel();
+		this.add(gp);
+		gameLoop = new Thread();
+		gameLoop.start();
 	  }
-
-    public void paintComponent(Graphics g){
-    	super.paintComponent(g);
-    	//マップを描く
-    	map.draw(g);
-		//プレイヤーを描く
-		p1.draw(g);
-    }
     
     public void run(){
     	while(true){
