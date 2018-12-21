@@ -29,6 +29,7 @@ public class Map implements Common {
     // チップセット
     private Image floorImage;
     private Image wallImage;
+    private Image blockImage;
 
     // メインパネルへの参照
     private GamePanel panel;
@@ -36,6 +37,14 @@ public class Map implements Common {
     public Map(GamePanel panel) {
         // イメージをロード
         loadImage();
+        for(int i=1;i<ROW-1;i++){
+            for(int j=1;j<ROW;j++){
+                if(map[i][j]==0&&!(i==1&&j==1)&&!(i==2&&j==1)&&!(i==1&&j==2)){
+                    double r = Math.random();
+                    if(r<0.6)map[i][j]=2;
+                }
+            }
+        }
     }
 
     public void draw(Graphics g) {
@@ -49,6 +58,10 @@ public class Map implements Common {
                     case 1 : // 壁
                         g.drawImage(wallImage, j * CS, i * CS, panel);
                         break;
+                    case 2 : // 壁
+                        g.drawImage(blockImage, j * CS, i * CS, panel);
+                        break;
+                    
                 }
             }
         }
@@ -70,5 +83,8 @@ public class Map implements Common {
 
         icon = new ImageIcon(getClass().getResource("image/wall.gif"));
         wallImage = icon.getImage();
+
+        icon = new ImageIcon(getClass().getResource("image/block.png"));
+        blockImage = icon.getImage();
     }
 }

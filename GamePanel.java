@@ -13,9 +13,12 @@ class GamePanel extends JPanel implements Runnable{
 		this.mp = mp;
         map = new Map(this);//マップ生成
 		controller = new KeyController();//キーコントローラー生成
-		p1 = new Player(1,1,"image/Bomberman.png",map,this,controller);//プレイヤー生成
+		setFocusable(true);
+		addKeyListener(controller);
+		p1 = new Player(1,1,"image/BMW.png",map,this,controller);//プレイヤー生成
 		gameLoop = new Thread(this);
 		gameLoop.start();
+		requestFocus();
     }
 
     public void paintComponent(Graphics g){
