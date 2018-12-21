@@ -6,9 +6,11 @@ class GamePanel extends JPanel implements Runnable{
     private Map map;
 	private Player p1;
 	private KeyController controller;
-    private Thread gameLoop;
+	private Thread gameLoop;
+	private MainPanel mp;
     
-    public GamePanel(){
+    public GamePanel(MainPanel mp){
+		this.mp = mp;
         map = new Map(this);//マップ生成
 		controller = new KeyController();//キーコントローラー生成
 		p1 = new Player(1,1,"image/Bomberman.png",map,this,controller);//プレイヤー生成

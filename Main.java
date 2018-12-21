@@ -5,7 +5,6 @@ import javax.swing.JPanel;
 class Main extends JFrame{
 	public Main(){
 		setTitle("bomberman");
-
 		MainPanel panel = new MainPanel(this);
 		Container contentPane = getContentPane();
 		contentPane.add(panel);
