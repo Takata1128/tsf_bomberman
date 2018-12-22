@@ -52,6 +52,13 @@ class GameServer implements CommWrap {
   }
 }
 
+class NetworkObject{
+  int id;
+  NetworkObject(int id){
+    this.id = id;
+  }
+}
+
 class NetworkManager {
   public SyncData data;
   private boolean is_server;
@@ -101,16 +108,21 @@ class SyncData {
   }
 }
 
-public class TestNetwork {
-  public static void main(String[] arg) {
-    NetworkManager nm = new NetworkManager(true);
-    nm.data.sv_x = -1;
-    nm.data.sv_y = -1;
-    nm.data.cl_x = -1;
-    nm.data.cl_y = -1;
-    for (int i = 0; i < 1000000; i++) {
-      nm.recv();
-      System.out.println(nm.data.cl_x + " " + nm.data.cl_y);
-    }
-  }
-}
+// public class TestNetwork {
+//   public static void main(String[] arg) {
+//     //server
+//     NetworkManager nm = new NetworkManager(true);
+//     nm.data.sv_x = -1;
+//     nm.data.sv_y = -1;
+//     nm.data.cl_x = -1;
+//     nm.data.cl_y = -1;
+//     for (int i = 0; i < 1000; i++) {
+//       nm.data.sv_x += 1;
+//       nm.data.sv_y += 1;
+//       nm.recv();
+//       nm.send();
+//       System.out.println("[Client]" + nm.data.cl_x + " " + nm.data.cl_y);
+//       System.out.println("[Server]" + nm.data.sv_x + " " + nm.data.sv_y);
+//     }
+//   }
+// }
