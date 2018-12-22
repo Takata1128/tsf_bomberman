@@ -52,10 +52,44 @@ class GameServer implements CommWrap {
   }
 }
 
-class NetworkObject{
-  int id;
-  NetworkObject(int id){
-    this.id = id;
+interface NetworkObject {
+  public int getId();
+
+  public void toRecvFormat(String data);
+
+  public String toSendFormat();
+}
+
+class PlayerXY implements NetworkObject {
+  int x, y, id;
+
+  PlayerXY(int x, int y) {
+    this.id = 1;
+    this.x = x;
+    this.y = y;
+  }
+
+  PlayerXY() {
+    this.id = 1;
+  }
+
+  public String toSendFormat() {
+    String string_data = String.format("%d,%d %d", id, x, y);
+    System.out.println(string_data);
+    return string_data;
+  }
+
+  // idなし部分を引数に取る
+  public void toRecvFormat(String data) {
+    if (data == null)
+      return;
+    String[] xy = data.split(" ");
+    this.x = Integer.parseInt(xy[0]);
+    this.y = Integer.parseInt(xy[1]);
+  }
+
+  public int getId() {
+    return this.id;
   }
 }
 
@@ -74,14 +108,31 @@ class NetworkManager {
     }
   }
 
-  void send() {
-    String msg = data.toSendFormat();
+  // NetworkObjectを受け取って文字列に変換して送信
+  void send(NetworkObject obj) {
+    String msg = obj.toSendFormat();
+    System.out.println("[debug send]" + msg);
     network.send(msg);
   }
 
-  void recv() {
+  // 文字列を受け取ってidを見て、NetworkObjectをに変換
+  // msgはid,data1 data2 data3 ...となっておりidを見て適切なNetworkObjectを生成する
+  NetworkObject recv() {
     String msg = network.recv();
-    data.toRecvFormat(msg);
+    System.out.println(msg);
+    if (msg == null) {
+      return null;
+    }
+    String[] msg_split = msg.split(",");
+    int id = Integer.parseInt(msg_split[0]);
+    String data = msg_split[1];
+    System.out.println("[debug recv]" + data);
+    NetworkObject obj = null;
+    if (id == 1) {
+      obj = new PlayerXY();
+      obj.toRecvFormat(data);
+    }
+    return obj;
   }
 }
 
@@ -108,21 +159,22 @@ class SyncData {
   }
 }
 
-// public class TestNetwork {
-//   public static void main(String[] arg) {
-//     //server
-//     NetworkManager nm = new NetworkManager(true);
-//     nm.data.sv_x = -1;
-//     nm.data.sv_y = -1;
-//     nm.data.cl_x = -1;
-//     nm.data.cl_y = -1;
-//     for (int i = 0; i < 1000; i++) {
-//       nm.data.sv_x += 1;
-//       nm.data.sv_y += 1;
-//       nm.recv();
-//       nm.send();
-//       System.out.println("[Client]" + nm.data.cl_x + " " + nm.data.cl_y);
-//       System.out.println("[Server]" + nm.data.sv_x + " " + nm.data.sv_y);
-//     }
-//   }
-// }
+public class TestNetwork {
+  public static void main(String[] arg) {
+    NetworkManager nm = new NetworkManager(true);
+    int x = 0, y = 0;
+    for (int i = 0; i < 1000; i++) {
+      x += 1;
+      y += 1;
+      PlayerXY player = new PlayerXY(x, y);
+      nm.send(player);
+      NetworkObject obj = nm.recv();
+      if (obj == null) {
+        continue;
+      }
+      PlayerXY obj2 = (PlayerXY) obj;
+      System.out.println("[Client]" + obj2.x + " " + obj2.y);
+      System.out.println("[Server]" + x + " " + y);
+    }
+  }
+}
