@@ -13,11 +13,12 @@ class Player implements Observer,Common{
     private Map map;
     private MainPanel panel;
     private KeyController Controller;
+    private NetworkManager nm;
 
-    public Player(int x,int y,String filename,Map map,MainPanel panel,KeyController kc){
+    public Player(int x,int y,String filename,Map map,MainPanel panel,KeyController kc,NetworkManager nm){
       this.x = x;
       this.y = y;
-
+      this.nm = nm;
       direction = 1;
       count = 0;
       this.map = map;
@@ -54,7 +55,8 @@ class Player implements Observer,Common{
                 direction = DOWN;
                 break;
         }
-
+        PlayerXY player = new PlayerXY(x, y, direction);
+        nm.send(player);
         System.out.println("direction: "+direction);
         panel.repaint();
     }

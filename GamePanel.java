@@ -1,3 +1,0 @@
-class GamePanel extends JPanel{
-
-}

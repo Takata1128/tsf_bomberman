@@ -20,7 +20,6 @@ class GameClient implements CommWrap {
   @Override
   public String recv() {
     String msg = cl.recv();
-    System.out.println(msg);
     if (msg == null)
       return null;
     return msg;
@@ -45,7 +44,6 @@ class GameServer implements CommWrap {
   public String recv() {
     String msg;
     msg = sv.recv();
-    System.out.println(msg);
     if (msg == null)
       return null;
     return msg;
@@ -61,12 +59,13 @@ interface NetworkObject {
 }
 
 class PlayerXY implements NetworkObject {
-  int x, y, id;
+  int x, y, direction, id;
 
-  PlayerXY(int x, int y) {
+  PlayerXY(int x, int y, int direction) {
     this.id = 1;
     this.x = x;
     this.y = y;
+    this.direction = direction;
   }
 
   PlayerXY() {
@@ -74,8 +73,7 @@ class PlayerXY implements NetworkObject {
   }
 
   public String toSendFormat() {
-    String string_data = String.format("%d,%d %d", id, x, y);
-    System.out.println(string_data);
+    String string_data = String.format("%d,%d %d %d", id, x, y, direction);
     return string_data;
   }
 
@@ -86,6 +84,7 @@ class PlayerXY implements NetworkObject {
     String[] xy = data.split(" ");
     this.x = Integer.parseInt(xy[0]);
     this.y = Integer.parseInt(xy[1]);
+    this.direction = Integer.parseInt(xy[2]);
   }
 
   public int getId() {
@@ -111,7 +110,9 @@ class NetworkManager {
   // NetworkObjectを受け取って文字列に変換して送信
   void send(NetworkObject obj) {
     String msg = obj.toSendFormat();
-    System.out.println("[debug send]" + msg);
+    if(msg != null){
+      System.out.println("[debug send]" + msg);
+    }
     network.send(msg);
   }
 
@@ -119,7 +120,9 @@ class NetworkManager {
   // msgはid,data1 data2 data3 ...となっておりidを見て適切なNetworkObjectを生成する
   NetworkObject recv() {
     String msg = network.recv();
-    System.out.println(msg);
+    if(msg != null){
+      System.out.println(msg);
+    }
     if (msg == null) {
       return null;
     }
@@ -143,12 +146,12 @@ class SyncData {
 
   public String toSendFormat() {
     String string_data = String.format("%d %d %d %d", sv_x, sv_y, cl_x, cl_y);
-    System.out.println(string_data);
+    //System.out.println(string_data);
     return string_data;
   }
 
   public void toRecvFormat(String data) {
-    System.out.println(data);
+    //System.out.println(data);
     if (data == null)
       return;
     String[] xy = data.split(" ");
@@ -159,22 +162,22 @@ class SyncData {
   }
 }
 
-public class TestNetwork {
-  public static void main(String[] arg) {
-    NetworkManager nm = new NetworkManager(true);
-    int x = 0, y = 0;
-    for (int i = 0; i < 1000; i++) {
-      x += 1;
-      y += 1;
-      PlayerXY player = new PlayerXY(x, y);
-      nm.send(player);
-      NetworkObject obj = nm.recv();
-      if (obj == null) {
-        continue;
-      }
-      PlayerXY obj2 = (PlayerXY) obj;
-      System.out.println("[Client]" + obj2.x + " " + obj2.y);
-      System.out.println("[Server]" + x + " " + y);
-    }
-  }
-}
+// public class TestNetwork {
+//   public static void main(String[] arg) {
+//     NetworkManager nm = new NetworkManager(true);
+//     int x = 0, y = 0;
+//     for (int i = 0; i < 1000; i++) {
+//       x += 1;
+//       y += 1;
+//       PlayerXY player = new PlayerXY(x, y);
+//       nm.send(player);
+//       NetworkObject obj = nm.recv();
+//       if (obj == null) {
+//         continue;
+//       }
+//       PlayerXY obj2 = (PlayerXY) obj;
+//       System.out.println("[Client]" + obj2.x + " " + obj2.y);
+//       System.out.println("[Server]" + x + " " + y);
+//     }
+//   }
+// }
