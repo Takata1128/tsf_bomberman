@@ -6,4 +6,5 @@ public interface Common{
   public static final int BOMB = 4;
 
   public static final int CS = 32;
+  public static final int BOMB_NUM = 5;
 }

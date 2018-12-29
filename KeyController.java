@@ -22,12 +22,14 @@ class KeyController extends Observable implements KeyListener,Common{
           keyState = RIGHT;
           break;
         case KeyEvent.VK_UP:
-          System.out.println("UP");
           keyState = UP;
           break;
         case KeyEvent.VK_DOWN:
           keyState = DOWN;
           break;
+        case KeyEvent.VK_B:
+	    keyState = BOMB;
+	    break;
       }
       setChanged();
       notifyObservers();

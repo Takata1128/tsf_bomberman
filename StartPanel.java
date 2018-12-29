@@ -14,6 +14,7 @@ class StartPanel extends JPanel implements Observer,Common{
         this.mp = mp;
         setLayout(null);
         setBackground(Color.white);
+        
         addKeyListener(controller);
         setFocusable(true);
     }
@@ -25,7 +26,7 @@ class StartPanel extends JPanel implements Observer,Common{
     public void update(Observable o,Object arg){
         int state = controller.getState();
         switch(state){
-            case UP:
+            case BOMB:
                 System.out.print("yes");
                 mp.setstate(1);
                 break;

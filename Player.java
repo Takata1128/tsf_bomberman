@@ -13,6 +13,9 @@ class Player implements Observer,Common{
     private Map map;
     private GamePanel panel;
     private KeyController Controller;
+    private BombManager bm;
+    private boolean isLive = true;
+    
 
     public Player(int x,int y,String filename,Map map,GamePanel panel,KeyController kc){
       this.x = x;
@@ -22,6 +25,7 @@ class Player implements Observer,Common{
       count = 0;
       this.map = map;
       this.panel = panel;
+      bm = new BombManager("image/bomb.png", "image/eff.png", map, panel);
       Controller = kc;
       Controller.addObserver(this);
       loadImage(filename);
@@ -53,11 +57,20 @@ class Player implements Observer,Common{
                 if (!map.isHit(x, y+1)) y++;
                 direction = DOWN;
                 break;
+	    case BOMB:
+		bm.set(x, y);
+		break;
         }
         panel.repaint();
     }
     public void draw(Graphics g){
-      g.drawImage(image,x*CS,y*CS,x*CS+CS,y*CS+CS,count*CS,direction*CS,count*CS+CS,direction*CS+CS,panel);
+	if(isLive == true){
+	    if(map.effHit(x,y) == true){
+		isLive = false;
+	    }
+	    bm.draw(g);
+	    g.drawImage(image,x*CS,y*CS,x*CS+CS,y*CS+CS,count*CS,direction*CS,count*CS+CS,direction*CS+CS,panel);
+	}
     }
 
     // アニメーションクラス

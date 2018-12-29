@@ -52,31 +52,55 @@ public class Map implements Common {
             for (int j = 0; j < COL; j++) {
                 // mapの値に応じて画像を描く
                 switch (map[i][j]) {
-                    case 0 : // 床
+		    case 0 : // 床
                         g.drawImage(floorImage, j * CS, i * CS, panel);
                         break;
-                    case 1 : // 壁
+                   case 1 : // 壁
                         g.drawImage(wallImage, j * CS, i * CS, panel);
                         break;
                     case 2 : // 壁
                         g.drawImage(blockImage, j * CS, i * CS, panel);
                         break;
-                    
+		    case 3 : //床と爆弾
+			g.drawImage(floorImage, j * CS, i * CS, panel);
+                        break;
+		    case 4 : //床と爆風
+			g.drawImage(floorImage, j * CS, i * CS, panel);
+                        break;
                 }
             }
         }
     }
 
     public boolean isHit(int x, int y) {
-        // (x,y)に壁があったらぶつかる
-        if (map[y][x] != 0) {
-            return true;
+        // (x,y)が床or爆風があったらぶつからない
+        if (map[y][x] == 0 || map[y][x] == 4) {
+            return false;
         }
 
-        // なければぶつからない
-        return false;
+        // なければぶつかる
+        return true;
     }
 
+    //マップの状態を所得
+    public int get(int x, int y){
+	return map[y][x];
+    }
+
+    //マップの状態をセット
+    public void set(int x, int y, int i){
+	map[y][x] = i;
+    }
+
+    //爆風について
+    public boolean effHit(int x, int y){
+	if(map[y][x] == 4){ //爆風に当たったら
+	    return true;
+	}
+	return false;
+    }
+
+   
     private void loadImage() {
         ImageIcon icon = new ImageIcon(getClass().getResource("image/floor.gif"));
         floorImage = icon.getImage();
