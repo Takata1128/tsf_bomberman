@@ -14,13 +14,12 @@ class Player implements Observer,Common{
     private GamePanel panel;
     private KeyController Controller;
     private BombManager bm;
-    private boolean isLive = true;
+    public boolean isLive = true;
     
 
     public Player(int x,int y,String filename,Map map,GamePanel panel,KeyController kc){
       this.x = x;
       this.y = y;
-
       direction = 1;
       count = 0;
       this.map = map;
@@ -57,9 +56,9 @@ class Player implements Observer,Common{
                 if (!map.isHit(x, y+1)) y++;
                 direction = DOWN;
                 break;
-	    case BOMB:
-		bm.set(x, y);
-		break;
+	        case BOMB:
+		        bm.set(x, y);
+		        break;
         }
         panel.repaint();
     }
