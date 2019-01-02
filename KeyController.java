@@ -6,10 +6,6 @@ import java.awt.event.KeyListener;
 class KeyController extends Observable implements KeyListener,Common{
   private int keyState;
 
-  public KeyController(){
-    System.out.print("KC generated.");
-  }
-
   public int getState(){return keyState;}
 
   public void keyPressed(KeyEvent e){
@@ -28,8 +24,8 @@ class KeyController extends Observable implements KeyListener,Common{
           keyState = DOWN;
           break;
         case KeyEvent.VK_B:
-	    keyState = BOMB;
-	    break;
+	        keyState = BOMB;
+	        break;
       }
       setChanged();
       notifyObservers();
