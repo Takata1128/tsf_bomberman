@@ -23,6 +23,9 @@ class KeyController extends Observable implements KeyListener,Common{
         case KeyEvent.VK_DOWN:
           keyState = DOWN;
           break;
+        case KeyEvent.VK_B:
+	        keyState = BOMB;
+	        break;
       }
       setChanged();
       notifyObservers();

@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,24 +8,24 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-class StartPanel extends JPanel implements Observer,Common{
+class ResultPanel extends JPanel implements Observer,Common{
     public KeyController controller;
     private MainPanel mp;
-    private String titleImageName;
-    private BufferedImage titleImage;
+    private String resultImageName;
+    private BufferedImage resultImage;
 
-    public StartPanel(MainPanel mp){
+    public ResultPanel(MainPanel mp){
         //キーコントローラー追加
         controller = new KeyController();
         controller.addObserver(this);
         //MainPanel
         this.mp = mp;
         //タイトル画像読み込み
-        titleImageName = "image/title.png";
+        resultImageName = "image/result.png";
         try{
-            titleImage = ImageIO.read(new File(titleImageName));
+            resultImage = ImageIO.read(new File(resultImageName));
         }catch(IOException e){
-            System.out.println("image file not found. [" + titleImageName + "]");
+            System.out.println("image file not found. [" + resultImageName + "]");
         }
         //てきとう
         setLayout(null);
@@ -40,12 +38,12 @@ class StartPanel extends JPanel implements Observer,Common{
     }
 
     public void paintComponent(Graphics g){
-        //ウィンドウサイズ取得
+        //ウィンドウサイズ描画
         Dimension size = getSize();
         //画像描画
-        g.drawImage(titleImage,0,0,null);
+        g.drawImage(resultImage,0,0,null);
         //以下文字列のためのあれこれ
-        String text = "Press B button to start game.";
+        String text = "Press B button to play again.";
         Font f = new Font("Serif",Font.PLAIN,40);
         g.setFont(f);
         g.setColor(Color.black);
@@ -55,17 +53,15 @@ class StartPanel extends JPanel implements Observer,Common{
         int x = size.width/2 - rectText.width/2;
         int y = size.height/2 - rectText.height/2+fm.getMaxAscent();
         g.drawString(text, x, y);
-      
     }
-    //キー入力に反応
+
     public void update(Observable o,Object arg){
         int state = controller.getState();
         switch(state){
-            case BOMB://Bボタン押されたら
-                System.out.println("startPanel->gamePanel");
-                mp.setstate(GAME_SCENE);
+            case BOMB:
+                System.out.println("resultPanel->startPanel");
+                mp.setstate(TITLE_SCENE);
                 break;
         }
     }
 }
->>>>>>> master
