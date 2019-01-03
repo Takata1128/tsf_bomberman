@@ -15,7 +15,7 @@ class ResultPanel extends JPanel implements Observer,Common{
     private BufferedImage resultImage;
 
     public ResultPanel(MainPanel mp){
-        //キーコントローラー追加
+        //キーコントローラー追�?
         controller = new KeyController();
         controller.addObserver(this);
         //MainPanel
@@ -27,7 +27,7 @@ class ResultPanel extends JPanel implements Observer,Common{
         }catch(IOException e){
             System.out.println("image file not found. [" + resultImageName + "]");
         }
-        //てきとう
+        //てきと�?
         setLayout(null);
         setBackground(Color.white);
         //キー入力もらう
@@ -42,7 +42,7 @@ class ResultPanel extends JPanel implements Observer,Common{
         Dimension size = getSize();
         //画像描画
         g.drawImage(resultImage,0,0,null);
-        //以下文字列のためのあれこれ
+        //以下文字�?��?�ためのあれこれ
         String text = "Press B button to play again.";
         Font f = new Font("Serif",Font.PLAIN,40);
         g.setFont(f);
