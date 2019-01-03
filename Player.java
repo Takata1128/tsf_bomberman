@@ -13,14 +13,6 @@ class Player implements Observer,Common{
     private Map map;
     private GamePanel panel;
     private KeyController Controller;
-<<<<<<< HEAD
-    private NetworkManager nm;
-
-    public Player(int x,int y,String filename,Map map,MainPanel panel,KeyController kc,NetworkManager nm){
-      this.x = x;
-      this.y = y;
-      this.nm = nm;
-=======
     private BombManager bm;
     public boolean isLive = true;
     
@@ -28,7 +20,6 @@ class Player implements Observer,Common{
     public Player(int x,int y,String filename,Map map,GamePanel panel,KeyController kc){
       this.x = x;
       this.y = y;
->>>>>>> master
       direction = 1;
       count = 0;
       this.map = map;
@@ -69,12 +60,6 @@ class Player implements Observer,Common{
 		        bm.set(x, y);
 		        break;
         }
-<<<<<<< HEAD
-        PlayerXY player = new PlayerXY(x, y, direction);
-        nm.send(player);
-        System.out.println("direction: "+direction);
-=======
->>>>>>> master
         panel.repaint();
     }
     public void draw(Graphics g){

@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -68,4 +66,3 @@ class StartPanel extends JPanel implements Observer,Common{
         }
     }
 }
->>>>>>> master

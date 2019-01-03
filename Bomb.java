@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -176,4 +174,3 @@ class Bomb implements Common, ActionListener{
     }
 	
 }
->>>>>>> master

@@ -5,12 +5,8 @@ import javax.swing.JPanel;
 class Main extends JFrame{
 	public Main(boolean is_server){
 		setTitle("bomberman");
-<<<<<<< HEAD
 
-		MainPanel panel = new MainPanel(is_server);
-=======
 		MainPanel panel = new MainPanel();
->>>>>>> master
 		Container contentPane = getContentPane();
 		contentPane.add(panel);
 		pack();

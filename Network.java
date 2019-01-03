@@ -1,6 +1,5 @@
 interface CommWrap {
   void send(String msg);
-
   String recv();
 }
 
@@ -52,28 +51,26 @@ class GameServer implements CommWrap {
 
 interface NetworkObject {
   public int getId();
-
   public void toRecvFormat(String data);
-
   public String toSendFormat();
 }
 
-class PlayerXY implements NetworkObject {
+class NetworkPlayer implements NetworkObject {
   int x, y, direction, id;
 
-  PlayerXY(int x, int y, int direction) {
+  NetworkPlayer(int x, int y, int direction) {
     this.id = 1;
     this.x = x;
     this.y = y;
     this.direction = direction;
   }
 
-  PlayerXY() {
+  NetworkPlayer() {
     this.id = 1;
   }
 
   public String toSendFormat() {
-    String string_data = String.format("%d,%d %d %d", id, x, y, direction);
+    String string_data = String.format("%d %d %d", x, y, direction);
     return string_data;
   }
 
@@ -92,24 +89,59 @@ class PlayerXY implements NetworkObject {
   }
 }
 
-class NetworkManager {
-  public SyncData data;
+class NetworkBomb implements NetworkObject{
+  int x, y, power, id;
+
+  NetworkBomb(int x, int y, int power){
+    this.id = 2;
+    this.x = x;
+    this.y = y;
+    this.power = power;
+  }
+
+  NetworkBomb(){
+    this.id = 2;
+  }
+
+  public String toSendFormat(){
+    String string_data = String.format("%d %d %d", x, y, power);
+    return string_data;
+  }
+
+  public void toRecvFormat(String data){
+    if (data == null)
+      return;
+    String[] xy = data.split(" ");
+    this.x = Integer.parseInt(xy[0]);
+    this.y = Integer.parseInt(xy[1]);
+    this.power = Integer.parseInt(xy[2]);
+  }
+
+  public int getId(){
+    return this.id;
+  }
+}
+
+class NetworkManager implements Runnable{
   private boolean is_server;
+  private Thread recvloop;
   CommWrap network;
 
   NetworkManager(boolean is_server) {
-    data = new SyncData();
     this.is_server = is_server;
     if (this.is_server) {
       network = new GameServer();
     } else {
       network = new GameClient();
     }
+    recvloop = new Thread(this);
+    recvloop.start();
   }
 
   // NetworkObjectを受け取って文字列に変換して送信
   void send(NetworkObject obj) {
-    String msg = obj.toSendFormat();
+    String id = String.valueOf(obj.getId());
+    String msg = id + "," + obj.toSendFormat();
     if(msg != null){
       System.out.println("[debug send]" + msg);
     }
@@ -132,52 +164,63 @@ class NetworkManager {
     System.out.println("[debug recv]" + data);
     NetworkObject obj = null;
     if (id == 1) {
-      obj = new PlayerXY();
+      obj = new NetworkPlayer();
+      obj.toRecvFormat(data);
+    }else if(id == 2){
+      obj = new NetworkBomb();
       obj.toRecvFormat(data);
     }
     return obj;
   }
-}
 
-class SyncData {
-  int[][] map;
-  int sv_x, sv_y;
-  int cl_x, cl_y;
-
-  public String toSendFormat() {
-    String string_data = String.format("%d %d %d %d", sv_x, sv_y, cl_x, cl_y);
-    //System.out.println(string_data);
-    return string_data;
-  }
-
-  public void toRecvFormat(String data) {
-    //System.out.println(data);
-    if (data == null)
-      return;
-    String[] xy = data.split(" ");
-    sv_x = Integer.parseInt(xy[0]);
-    sv_y = Integer.parseInt(xy[1]);
-    cl_x = Integer.parseInt(xy[2]);
-    cl_y = Integer.parseInt(xy[3]);
+  //別スレッドでデータを待受
+  //受信したら適切な型にキャストして通知
+  public void run(){
+    while(true){
+      NetworkObject obj = recv();
+      if (obj == null) {
+        continue;
+      }else if(obj instanceof NetworkPlayer){
+        System.out.println("===NetworkPlayer===");
+        NetworkPlayer obj2 = (NetworkPlayer) obj;
+        System.out.println (obj2.x + " " + obj2.y);
+      }else if(obj instanceof NetworkBomb){
+        System.out.println("===NetworkBomb===");
+        NetworkBomb obj2 = (NetworkBomb)obj;
+        System.out.println(obj2.x + " " + obj2.y);
+      }
+    }
   }
 }
 
-// public class TestNetwork {
-//   public static void main(String[] arg) {
-//     NetworkManager nm = new NetworkManager(true);
-//     int x = 0, y = 0;
-//     for (int i = 0; i < 1000; i++) {
-//       x += 1;
-//       y += 1;
-//       PlayerXY player = new PlayerXY(x, y);
-//       nm.send(player);
-//       NetworkObject obj = nm.recv();
-//       if (obj == null) {
-//         continue;
-//       }
-//       PlayerXY obj2 = (PlayerXY) obj;
-//       System.out.println("[Client]" + obj2.x + " " + obj2.y);
-//       System.out.println("[Server]" + x + " " + y);
-//     }
-//   }
-// }
+
+//テストコード
+public class Network {
+  public static void main(String[] arg) {
+    boolean is_server = false;
+    String recvMessage = "Server";
+    String sendMessage = "Clinet";
+    if(arg[0].equals("s")){
+      is_server = true;
+      recvMessage = "Client";
+      sendMessage = "Server";
+    }
+    NetworkManager nm = new NetworkManager(is_server);
+    int x = 0, y = 0;
+    int bomb_x = 0, bomb_y = 0;
+    for (int i = 0; i < 100; i++) {
+      x += 1;
+      y += 1;
+      bomb_x *= x + y;
+      bomb_y += bomb_x - x;
+      if(is_server){
+        bomb_x = 10;
+        bomb_y = 10;
+      }
+      NetworkPlayer player = new NetworkPlayer(x, y, 2);
+      NetworkBomb bomb = new NetworkBomb(bomb_x, bomb_y, 1);
+      nm.send(player);
+      nm.send(bomb);
+    }
+  }
+}
