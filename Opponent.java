@@ -11,10 +11,10 @@ class Opponent implements Observer, Common {
   private int count;
   private Thread threadAnime;
   private Map map;
-  private MainPanel panel;
+  private GamePanel panel;
   private OpponentController Controller;
 
-  public Opponent(int x, int y, String filename, Map map, MainPanel panel, OpponentController controller) {
+  public Opponent(int x, int y, String filename, Map map, GamePanel panel, OpponentController controller) {
     this.x = x;
     this.y = y;
 
@@ -35,7 +35,7 @@ class Opponent implements Observer, Common {
   }
 
   public void update(Observable o, Object arg) {
-    PlayerXY player = (PlayerXY)arg;
+    NetworkPlayer player = (NetworkPlayer)arg;
     System.out.println("direction: " + player.direction);
     x = player.x;
     y = player.y;

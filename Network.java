@@ -1,8 +1,9 @@
+//[責務] Commライブラリのラップ(ClientとServerの差異吸収)
 interface CommWrap {
   void send(String msg);
   String recv();
 }
-
+//[責務] Commライブラリのclient実装
 class GameClient implements CommWrap {
   private CommClient cl = null;
 
@@ -24,7 +25,7 @@ class GameClient implements CommWrap {
     return msg;
   }
 }
-
+//[責務] Commライブラリのserver実装
 class GameServer implements CommWrap {
   private CommServer sv = null;
 
@@ -49,12 +50,14 @@ class GameServer implements CommWrap {
   }
 }
 
+//[責務] データの送受信に必要なメソッドを定義(これを実装して各プロトコルを定義する)
 interface NetworkObject {
   public int getId();
   public void toRecvFormat(String data);
   public String toSendFormat();
 }
 
+//[責務] プレイヤーのデータの送受信プロトコルを定義
 class NetworkPlayer implements NetworkObject {
   int x, y, direction, id;
 
@@ -88,7 +91,7 @@ class NetworkPlayer implements NetworkObject {
     return this.id;
   }
 }
-
+//[責務] 爆弾の送受信に関するプロトコルを定義
 class NetworkBomb implements NetworkObject{
   int x, y, power, id;
 
@@ -122,9 +125,53 @@ class NetworkBomb implements NetworkObject{
   }
 }
 
-class NetworkManager implements Runnable{
+//[責務] マップデータの送受信プロトコルの定義
+class NetworkMap implements NetworkObject{
+  public int[][] map;
+
+  private int Row = 15;
+  private int Col = 15;
+  private int id;
+
+  NetworkMap(int[][] map){
+    this.id = 3;
+    this.map = map.clone();
+  }
+
+  NetworkMap(){
+    this.id = 3;
+    this.map = new int[Row][Col];
+  }
+  public String toSendFormat(){
+    StringBuilder sb = new StringBuilder();
+    for(int i=0; i<Row; i++){
+      for(int j=0; j<Col; j++){
+         sb.append(String.format("%d ", map[i][j]));
+      }
+    }
+    return sb.toString();
+  }
+
+  public void toRecvFormat(String data){
+    int count = 0;
+    if(data == null)
+      return;
+    String[] map_data = data.split(" ");
+    for(int i=0; i<Row; i++){
+      for(int j=0; j<Col; j++){
+        map[i][j] = Integer.parseInt(map_data[count++]);
+      }
+    }
+  }
+
+  public int getId(){
+    return this.id;
+  }
+}
+
+//[責務] NetworkObjectの送受信
+class NetworkManager{
   private boolean is_server;
-  private Thread recvloop;
   CommWrap network;
 
   NetworkManager(boolean is_server) {
@@ -134,8 +181,6 @@ class NetworkManager implements Runnable{
     } else {
       network = new GameClient();
     }
-    recvloop = new Thread(this);
-    recvloop.start();
   }
 
   // NetworkObjectを受け取って文字列に変換して送信
@@ -158,38 +203,25 @@ class NetworkManager implements Runnable{
     if (msg == null) {
       return null;
     }
+
     String[] msg_split = msg.split(",");
     int id = Integer.parseInt(msg_split[0]);
     String data = msg_split[1];
+
     System.out.println("[debug recv]" + data);
     NetworkObject obj = null;
+
     if (id == 1) {
       obj = new NetworkPlayer();
       obj.toRecvFormat(data);
     }else if(id == 2){
       obj = new NetworkBomb();
       obj.toRecvFormat(data);
+    }else if(id == 3){
+      obj = new NetworkMap();
+      obj.toRecvFormat(data);
     }
     return obj;
-  }
-
-  //別スレッドでデータを待受
-  //受信したら適切な型にキャストして通知
-  public void run(){
-    while(true){
-      NetworkObject obj = recv();
-      if (obj == null) {
-        continue;
-      }else if(obj instanceof NetworkPlayer){
-        System.out.println("===NetworkPlayer===");
-        NetworkPlayer obj2 = (NetworkPlayer) obj;
-        System.out.println (obj2.x + " " + obj2.y);
-      }else if(obj instanceof NetworkBomb){
-        System.out.println("===NetworkBomb===");
-        NetworkBomb obj2 = (NetworkBomb)obj;
-        System.out.println(obj2.x + " " + obj2.y);
-      }
-    }
   }
 }
 

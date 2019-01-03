@@ -7,7 +7,8 @@ class Main extends JFrame{
 		setTitle("bomberman");
 
 		MainPanel panel = new MainPanel();
-		Container contentPane = getContentPane();
+    Container contentPane = getContentPane();
+    panel.is_server = is_server;
 		contentPane.add(panel);
 		pack();
 	}

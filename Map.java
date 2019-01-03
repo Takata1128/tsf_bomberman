@@ -89,6 +89,14 @@ public class Map implements Common {
     return map[y][x];
   }
 
+  public NetworkMap getNetworkMap(){
+    return new NetworkMap(map);
+  }
+
+  public void setNetworkMap(NetworkMap nmap){
+    map = nmap.map.clone();
+  }
+
   // マップの状態をセット
   public void set(int x, int y, int i) {
     map[y][x] = i;
