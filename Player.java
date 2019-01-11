@@ -9,6 +9,7 @@ class Player implements Observer, Common {
   private int x, y;
   private int direction;
   private int count;
+  private int item;
   private Thread threadAnime;
   private Map map;
   private GamePanel panel;
@@ -74,6 +75,15 @@ class Player implements Observer, Common {
   }
 
   public void draw(Graphics g) {
+    //テスト用 アイテムについて
+	  item = map.getItem(x,y);
+	  if(item == 1 || item == -1){
+	    bm.setPow(item);
+	  }else if(item == 2 || item == -2){
+	    bm.addMax(item);
+	  }else if(item == 3 || item == -3){
+	    bm.isPanatrate(item);
+	  }
     if (isLive == true) {
       if (map.effHit(x, y) == true) {
         isLive = false;

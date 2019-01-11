@@ -1,4 +1,4 @@
-//[責務] Commライブラリのラップ(ClientとServerの差異吸収)
+//[責務] Commライブラリのラ(ClientとServerの差異吸収)
 interface CommWrap {
   void send(String msg);
   String recv();
@@ -50,7 +50,7 @@ class GameServer implements CommWrap {
   }
 }
 
-//[責務] データの送受信に必要なメソッドを定義(これを実装して各プロトコルを定義する)
+//[責務] データの送受信に必要なメソッドを定義(これを実装してプロトコルを定義する)
 interface NetworkObject {
   public int getId();
   public void toRecvFormat(String data);
@@ -77,7 +77,7 @@ class NetworkPlayer implements NetworkObject {
     return string_data;
   }
 
-  // idなし部分を引数に取る
+  // idなを引数に取る
   public void toRecvFormat(String data) {
     if (data == null)
       return;
@@ -193,7 +193,7 @@ class NetworkManager{
     network.send(msg);
   }
 
-  // 文字列を受け取ってidを見て、NetworkObjectをに変換
+  // 文字列を受け取ってidを見て、NetworkObjectに変換
   // msgはid,data1 data2 data3 ...となっておりidを見て適切なNetworkObjectを生成する
   NetworkObject recv() {
     String msg = network.recv();
@@ -226,7 +226,7 @@ class NetworkManager{
 }
 
 
-//テストコード
+//
 public class Network {
   public static void main(String[] arg) {
     boolean is_server = false;

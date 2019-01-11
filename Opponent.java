@@ -61,7 +61,7 @@ class Opponent implements Observer, Common {
 
         panel.repaint();
 
-        // 300ミリ秒休止＝300ミリ秒おきにキャラクターの絵を切り替える
+        // 300ミリ秒休止300ミリ秒おきにキャラクターの絵を切り替える
         try {
           Thread.sleep(300);
         } catch (InterruptedException e) {

@@ -187,4 +187,5 @@ class CommClient {
     in = null;
     out = null;
     clientS = null;
-  }}
+  }
+}
