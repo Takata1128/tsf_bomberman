@@ -9,23 +9,14 @@ public class Map implements Common {
   private static final int COL = 15;
 
   // マップ 0:床 1:壁
-  private int[][] map = { 
-      { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-      { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } 
-    };
+  private int[][] map = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
 
   // チップセット
   private Image floorImage;
@@ -36,25 +27,29 @@ public class Map implements Common {
   // メインパネルへの参照
   private GamePanel panel;
 
-  //アイテム管理
-  private ItemManager im;
+  // アイテム管理
+  public ItemManager im;
   private double random;
   private int forReturn;
+  private NetworkManager network;
 
-  public Map(GamePanel panel) {
+  public Map(GamePanel panel, NetworkManager network) {
     // イメージをロード
+    this.network = network;
     loadImage();
-    im = new ItemManager(this,panel);
-    for(int i=1;i<ROW-1;i++){
-        for(int j=1;j<ROW;j++){
-            if(map[i][j]==0&&!(i==1&&j==1)&&!(i==2&&j==1)&&!(i==1&&j==2)&&!(i==13&&j==13)&&!(i==13&&j==12)&&!(i==12&&j==13)){
-                double r = Math.random();
-                if(r<0.6) map[i][j]=2; 
-            }
+    im = new ItemManager(this, panel, network);
+    for (int i = 1; i < ROW - 1; i++) {
+      for (int j = 1; j < ROW; j++) {
+        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2) && !(i == 13 && j == 13)
+            && !(i == 13 && j == 12) && !(i == 12 && j == 13)) {
+          double r = Math.random();
+          if (r < 0.6)
+            map[i][j] = 2;
         }
+      }
     }
     setItem();
-  } 
+  }
 
   public void draw(Graphics g) {
     for (int i = 0; i < ROW; i++) {
@@ -76,9 +71,9 @@ public class Map implements Common {
         case 4: // 床と爆風
           g.drawImage(floorImage, j * CS, i * CS, panel);
           break;
-        case 5 ://床とアイテム？
+        case 5:// 床とアイテム？
           g.drawImage(floorImage, j * CS, i * CS, panel);
-          im.drawItem(j,i,g);
+          im.drawItem(j, i, g);
           break;
         }
       }
@@ -87,7 +82,7 @@ public class Map implements Common {
 
   public boolean isHit(int x, int y) {
     // (x,y)が床or爆風があったらぶつからない
-    if (map[y][x] == 0 || map[y][x] == 4||map[y][x]==5) {
+    if (map[y][x] == 0 || map[y][x] == 4 || map[y][x] == 5) {
       return false;
     }
 
@@ -100,11 +95,11 @@ public class Map implements Common {
     return map[y][x];
   }
 
-  public NetworkMap getNetworkMap(){
+  public NetworkMap getNetworkMap() {
     return new NetworkMap(map);
   }
 
-  public void setNetworkMap(NetworkMap nmap){
+  public void setNetworkMap(NetworkMap nmap) {
     map = nmap.map.clone();
   }
 
@@ -121,29 +116,28 @@ public class Map implements Common {
     return false;
   }
 
-  //アイテム所得用 アイテムが増えたらいじるかも
-  public int getItem(int x, int y){
-    if(map[y][x] == 5){
-        map[y][x] = 0;
-        //return 1;
+  // アイテム所得用 アイテムが増えたらいじるかも
+  public int getItem(int x, int y) {
+    if (map[y][x] == 5) {
+      map[y][x] = 0;
+      // return 1;
     }
-    forReturn = im.getItemEff(x,y);
-    im.stopEff(x,y);
+    forReturn = im.getItemEff(x, y);
+    im.stopEff(x, y);
     return forReturn;
-      }
-  
-  
-      private void setItem(){
-    for(int i = 0; i < ROW; i++){
-        for(int j = 0; j < COL; j++){
-      if(map[i][j]  == 2){
-          random  = Math.random();
-          im.set(j,i,random);
-      }
+  }
+
+  private void setItem() {
+    for (int i = 0; i < ROW; i++) {
+      for (int j = 0; j < COL; j++) {
+        if (map[i][j] == 2) {
+          random = Math.random();
+          im.set(j, i, random);
         }
+      }
     }
     im.resetNum();
-      }
+  }
 
   private void loadImage() {
     ImageIcon icon = new ImageIcon(getClass().getResource("image/floor.gif"));
@@ -156,6 +150,6 @@ public class Map implements Common {
     blockImage = icon.getImage();
 
     icon = new ImageIcon(getClass().getResource("image/item1.png"));
-	  itemImage = icon.getImage();
+    itemImage = icon.getImage();
   }
 }

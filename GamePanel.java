@@ -2,7 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyListener;
 
-class GamePanel extends JPanel implements Runnable, Common {
+class GamePanel extends JPanel implements Runnable, Common, NetworkCallback{
   private Map map;
   private Player p1;
   private Bomb bm;
@@ -16,10 +16,9 @@ class GamePanel extends JPanel implements Runnable, Common {
 
   public GamePanel(MainPanel mp) {
     this.mp = mp;
-    map = new Map(this);// マップ生成
+    int px, py, ox, oy;
     controller = new KeyController();// キーコントローラー生成
     opponentController = new OpponentController();
-    bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
     // キー入力受付
     setFocusable(true);
     addKeyListener(controller);
@@ -27,50 +26,86 @@ class GamePanel extends JPanel implements Runnable, Common {
     //サーバーかクライアントかによってプレイヤーの生成位置を決定
     //TODO: NetworkManagerインスタンス化時に接続待ちが発生するので、その時のviewをどうするか考える
     if(mp.is_server){
-      network = new NetworkManager(mp.is_server);
+      network = new NetworkManager(mp.is_server, this);
+      map = new Map(this, network);
       network.send(map.getNetworkMap());
-      p1 = new Player(1, 1, "image/BMW.png", map, this, controller, network, bombManager);// プレイヤー生成
-      opponent = new Opponent(13, 13, "image/BMW.png", map, this, opponentController);
+      px = py = 1;
+      ox = oy = 13;
     }else{
-      network = new NetworkManager(mp.is_server);
-      p1 = new Player(13, 13, "image/BMW.png", map, this, controller, network, bombManager);// プレイヤー生成
-      opponent = new Opponent(1, 1, "image/BMW.png", map, this, opponentController);
+      network = new NetworkManager(mp.is_server, this);
+      map = new Map(this, network);
+      px = py = 13;
+      ox = oy = 1;
     }
+
+    bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
+    p1 = new Player(px, py, "image/BMW.png", map, this, controller, network, bombManager);// プレイヤー生成
+    opponent = new Opponent(ox, oy, "image/BMW.png", map, this, opponentController);
     // ゲームループ開始
     gameLoop = new Thread(this);
     gameLoop.start();
 
+    network.start();
+
     //情報受信ループ
-    new Thread(new NetworkThread()).start();
+    //new Thread(new NetworkThread()).start();
+  }
+
+  public void playerCallback(NetworkPlayer player){
+    opponentController.setState(player);
+    for (var item : map.im.item) {
+      if(item != null){
+        item.printItem();
+      }
+    }
+    for(var item : map.im.itemEff){
+      System.out.println(item);
+    }
+  }
+
+  public void bombCallback(NetworkBomb nbomb){
+    bombManager.set(nbomb.x, nbomb.y);
+  }
+
+  public void mapCallback(NetworkMap nmap){
+    map.setNetworkMap(nmap);
+    repaint();
+  }
+
+  public void itemCallback(NetworkItem nitem){
+    System.out.println(nitem.num);
+    map.im.num = nitem.num;
+    map.im.setMax = nitem.num;
+    map.im.reset(nitem);
   }
 
   //相手からのデータを待ち受ける
   //受信した情報に応じて処理を分ける
-  private class NetworkThread extends Thread{
-    public void run(){
-      while(true){
-        NetworkObject obj = network.recv();
-        if (obj == null) {
-          continue;
-        } else if (obj instanceof NetworkPlayer) {
-          System.out.println("===NetworkPlayer===");
-          NetworkPlayer player = (NetworkPlayer) obj;
-          System.out.println("x:" + player.x + " y:" + player.y + " dir:" + player.direction);
-          opponentController.setState(player);
-        } else if (obj instanceof NetworkBomb) {
-          System.out.println("===NetworkBomb===");
-          NetworkBomb nbomb = (NetworkBomb) obj;
-          System.out.println(nbomb.x + " " + nbomb.y);
-          bombManager.set(nbomb.x, nbomb.y);
-        } else if (obj instanceof NetworkMap) {
-          System.out.println("===NetworkMap===");
-          NetworkMap nmap = (NetworkMap) obj;
-          map.setNetworkMap(nmap);
-          repaint();
-        }
-      }
-    }
-  }
+  // private class NetworkThread extends Thread{
+  //   public void run(){
+  //     while(true){
+  //       NetworkObject obj = network.recv();
+  //       if (obj == null) {
+  //         continue;
+  //       } else if (obj instanceof NetworkPlayer) {
+  //         System.out.println("===NetworkPlayer===");
+  //         NetworkPlayer player = (NetworkPlayer) obj;
+  //         System.out.println("x:" + player.x + " y:" + player.y + " dir:" + player.direction);
+  //         opponentController.setState(player);
+  //       } else if (obj instanceof NetworkBomb) {
+  //         System.out.println("===NetworkBomb===");
+  //         NetworkBomb nbomb = (NetworkBomb) obj;
+  //         System.out.println(nbomb.x + " " + nbomb.y);
+  //         bombManager.set(nbomb.x, nbomb.y);
+  //       } else if (obj instanceof NetworkMap) {
+  //         System.out.println("===NetworkMap===");
+  //         NetworkMap nmap = (NetworkMap) obj;
+  //         map.setNetworkMap(nmap);
+  //         repaint();
+  //       }
+  //     }
+  //   }
+  // }
 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);

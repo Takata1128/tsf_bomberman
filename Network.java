@@ -142,6 +142,7 @@ class NetworkMap implements NetworkObject{
     this.id = 3;
     this.map = new int[Row][Col];
   }
+
   public String toSendFormat(){
     StringBuilder sb = new StringBuilder();
     for(int i=0; i<Row; i++){
@@ -169,13 +170,54 @@ class NetworkMap implements NetworkObject{
   }
 }
 
+class NetworkItem implements NetworkObject{
+  private int id = 4;
+  public int x, y, num, img_num, itemEff;
+  
+  NetworkItem(int x, int y, int num, int img_num, int itemEff){
+    this.id = 4;
+    this.x = x;
+    this.y = y;
+    this.num = num;
+    this.img_num = img_num;
+    this.itemEff = itemEff;
+  }
+
+  NetworkItem(){
+    this.id = 4;
+  }
+
+  public String toSendFormat(){
+    return String.format("%d %d %d %d %d", x, y, num, img_num, itemEff);
+  }
+
+  public void toRecvFormat(String data){
+    if (data == null)
+      return;
+    String[] xy = data.split(" ");
+    this.x = Integer.parseInt(xy[0]);
+    this.y = Integer.parseInt(xy[1]);
+    this.num = Integer.parseInt(xy[2]);
+    this.img_num = Integer.parseInt(xy[3]);
+    this.itemEff = Integer.parseInt(xy[4]);
+  }
+
+  public int getId(){
+    return id;
+  }
+
+
+}
+
 //[責務] NetworkObjectの送受信
 class NetworkManager{
-  private boolean is_server;
+  public boolean is_server;
   CommWrap network;
+  NetworkCallback callback;
 
-  NetworkManager(boolean is_server) {
+  NetworkManager(boolean is_server, NetworkCallback callback) {
     this.is_server = is_server;
+    this.callback = callback;
     if (this.is_server) {
       network = new GameServer();
     } else {
@@ -220,39 +262,78 @@ class NetworkManager{
     }else if(id == 3){
       obj = new NetworkMap();
       obj.toRecvFormat(data);
+    }else if(id == 4){
+      obj = new NetworkItem();
+      obj.toRecvFormat(data);
     }
     return obj;
   }
-}
 
+  public void start(){
+    new Thread(new NetworkThread()).start();
+  }
 
-//
-public class Network {
-  public static void main(String[] arg) {
-    boolean is_server = false;
-    String recvMessage = "Server";
-    String sendMessage = "Clinet";
-    if(arg[0].equals("s")){
-      is_server = true;
-      recvMessage = "Client";
-      sendMessage = "Server";
-    }
-    NetworkManager nm = new NetworkManager(is_server);
-    int x = 0, y = 0;
-    int bomb_x = 0, bomb_y = 0;
-    for (int i = 0; i < 100; i++) {
-      x += 1;
-      y += 1;
-      bomb_x *= x + y;
-      bomb_y += bomb_x - x;
-      if(is_server){
-        bomb_x = 10;
-        bomb_y = 10;
+  // 相手からのデータを待ち受ける
+  // 受信した情報に応じて処理を分ける
+  private class NetworkThread extends Thread {
+    public void run() {
+      while (true) {
+        NetworkObject obj = recv();
+        if (obj == null) {
+          continue;
+        } else if (obj instanceof NetworkPlayer) {
+          NetworkPlayer player = (NetworkPlayer) obj;
+          callback.playerCallback(player);
+        } else if (obj instanceof NetworkBomb) {
+          NetworkBomb nbomb = (NetworkBomb) obj;
+          callback.bombCallback(nbomb);
+        } else if (obj instanceof NetworkMap) {
+          NetworkMap nmap = (NetworkMap) obj;
+          callback.mapCallback(nmap);
+        } else if(obj instanceof NetworkItem) {
+          NetworkItem nitem = (NetworkItem) obj;
+          callback.itemCallback(nitem);
+        } 
       }
-      NetworkPlayer player = new NetworkPlayer(x, y, 2);
-      NetworkBomb bomb = new NetworkBomb(bomb_x, bomb_y, 1);
-      nm.send(player);
-      nm.send(bomb);
     }
   }
 }
+
+interface NetworkCallback{
+  public void playerCallback(NetworkPlayer player);
+  public void bombCallback(NetworkBomb bomb);
+  public void mapCallback(NetworkMap map);
+  public void itemCallback(NetworkItem item);
+}
+
+
+
+// public class Network {
+//   public static void main(String[] arg) {
+//     boolean is_server = false;
+//     String recvMessage = "Server";
+//     String sendMessage = "Clinet";
+//     if(arg[0].equals("s")){
+//       is_server = true;
+//       recvMessage = "Client";
+//       sendMessage = "Server";
+//     }
+//     NetworkManager nm = new NetworkManager(is_server);
+//     int x = 0, y = 0;
+//     int bomb_x = 0, bomb_y = 0;
+//     for (int i = 0; i < 100; i++) {
+//       x += 1;
+//       y += 1;
+//       bomb_x *= x + y;
+//       bomb_y += bomb_x - x;
+//       if(is_server){
+//         bomb_x = 10;
+//         bomb_y = 10;
+//       }
+//       NetworkPlayer player = new NetworkPlayer(x, y, 2);
+//       NetworkBomb bomb = new NetworkBomb(bomb_x, bomb_y, 1);
+//       nm.send(player);
+//       nm.send(bomb);
+//     }
+//   }
+// }
