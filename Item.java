@@ -17,7 +17,6 @@ class Item implements Common{
 	this.panel = panel;
 	this.map = map;
 	this.itemNum = itemNum;
-
     }
 
     public boolean check(int x, int y){

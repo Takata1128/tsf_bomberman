@@ -18,6 +18,7 @@ class Bomb implements Common, ActionListener{
     private int illust = 0; // 0 = bomb, 1 = eff;
     private Map map;
     private int mapState; //マップの状態
+    private int velocity = 0;
     public Bomb(int x,int y,Image image1,Image image2,int power,GamePanel panel, Map map, boolean p){
 	this.x = x;
 	this.y = y;
@@ -69,6 +70,7 @@ class Bomb implements Common, ActionListener{
 	case 0: //爆弾
 	    //isSet = 1;
 	    g.drawImage(bombImage,x*CS,y*CS,panel);
+	    //velocity++;
 	    break;
 	case 1: //爆風
 	    //isSet = 2;
@@ -96,8 +98,8 @@ class Bomb implements Common, ActionListener{
 		if(panatrate == false){
 		    break;
 		}
-	    }else if(mapState == 5){
-		g.drawImage(effImage,i*CS,y*CS,panel);
+		/*}else if(mapState == 5){
+		  g.drawImage(effImage,i*CS,y*CS,panel);*/
 	    }else if(mapState != 1){
 		g.drawImage(effImage,i*CS,y*CS,panel);
 		map.set(i,y,4);
@@ -113,8 +115,8 @@ class Bomb implements Common, ActionListener{
 		if(panatrate == false){
 		    break;
 		}
-	    }else if(mapState == 5){
-		g.drawImage(effImage,i*CS,y*CS,panel);
+		/*}else if(mapState == 5){
+		  g.drawImage(effImage,i*CS,y*CS,panel);*/
 	    }else if(mapState != 1){
 		g.drawImage(effImage,i*CS,y*CS,panel);
 		map.set(i,y,4);
@@ -129,9 +131,9 @@ class Bomb implements Common, ActionListener{
 		if(panatrate == false){
 		    break;
 		}
-	    }else if(mapState == 5){
+		/*}else if(mapState == 5){
 		g.drawImage(effImage,x*CS,j*CS,panel);
-		//map.set(x,j,4);
+		//map.set(x,j,4);*/
 	    }else if(mapState != 1){
 		g.drawImage(effImage,x*CS,j*CS,panel);
 		map.set(x,j,4);
@@ -146,9 +148,9 @@ class Bomb implements Common, ActionListener{
 		if(panatrate == false){
 		    break;
 		}
-	    }else if(mapState == 5){
+		/*}else if(mapState == 5){
 		g.drawImage(effImage,x*CS,j*CS,panel);
-		//map.set(x,j,4);
+		//map.set(x,j,4);*/
 	    }else if(mapState != 1){
 		g.drawImage(effImage,x*CS,j*CS,panel);
 		map.set(x,j,4);
@@ -167,7 +169,7 @@ class Bomb implements Common, ActionListener{
 		    if(panatrate == false){
 			break;
 		    }
-		}else if(mapState != 1 && mapState != 5){
+		}else if(mapState != 1 /*&& mapState != 5*/){
 		    map.set(i,y,0);
 		}else{
 		    break;
@@ -180,7 +182,7 @@ class Bomb implements Common, ActionListener{
 		    if(panatrate == false){
 			break;
 		    }
-		}else if(mapState != 1 && mapState != 5){
+		}else if(mapState != 1 /*&& mapState != 5*/){
 		    map.set(i,y,0);
 		}else{
 		    break;
@@ -193,7 +195,7 @@ class Bomb implements Common, ActionListener{
 		    if(panatrate == false){
 			break;
 		    }
-		}else if(mapState != 1 && mapState != 5){
+		}else if(mapState != 1 /*&& mapState != 5*/){
 		    map.set(x,j,0);
 		}else{
 		    break;
@@ -206,14 +208,13 @@ class Bomb implements Common, ActionListener{
 		    if(panatrate == false){
 			break;
 		    }
-		}else if(mapState != 1 && mapState != 5){
+		}else if(mapState != 1 /*&& mapState != 5*/){
 		    map.set(x,j,0);
 		}else{
 		    break;
 		}
 	    }
 	    illust = 3;
-
     }
 
     
@@ -224,7 +225,7 @@ class Bomb implements Common, ActionListener{
 	    System.out.println("BOMB!");
 	    isSet = 2;
 	    illust = 1;
-	    timer.setInitialDelay(1000); //爆風は1秒で消す
+	    timer.setInitialDelay(200); //爆風は0.5秒で消す
 	    timer.restart();
 	    break;
 	case 1:
