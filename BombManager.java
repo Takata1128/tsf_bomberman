@@ -11,8 +11,8 @@ class BombManager implements Common {
   private Image bombImage, effImage;
   private GamePanel panel;
   private int num = 0;
-  private int setMax = 2; // 設置できる最大数
-  public  int bombPow = 3; // 爆弾の範囲
+  private int setMax = 1; // 設置できる最大数
+  public  int bombPow = 1; // 爆弾の範囲
   private boolean pane = false;
   private Map map;
 

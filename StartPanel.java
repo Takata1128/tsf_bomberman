@@ -63,6 +63,7 @@ class StartPanel extends JPanel implements Observer,Common{
                 System.out.println("startPanel->gamePanel");
                 mp.setstate(GAME_SCENE);
                 break;
+            //TODO:Sでサーバー側起動、Cでクライアント側起動
         }
     }
 }
