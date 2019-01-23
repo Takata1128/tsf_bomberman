@@ -18,7 +18,8 @@ class Player implements Observer, Common {
   private NetworkManager network;
   public boolean isLive = true;
 
-  public Player(int x, int y, String filename, Map map, GamePanel panel, KeyController kc, NetworkManager network, BombManager bm) {
+  public Player(int x, int y, String filename, Map map, GamePanel panel, KeyController kc, NetworkManager network,
+      BombManager bm) {
     this.x = x;
     this.y = y;
     direction = 1;
@@ -66,24 +67,24 @@ class Player implements Observer, Common {
       bm.set(x, y);
       break;
     }
-    if(dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN){
+    if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
       network.send(getPlayer());
-    }else if(dir == BOMB){
-      network.send(new NetworkBomb(x, y, 3));
+    } else if (dir == BOMB) {
+      network.send(new NetworkBomb(x, y, bm.bombPow));
     }
     panel.repaint();
   }
 
   public void draw(Graphics g) {
-    //テスト用 アイテムについて
-	  item = map.getItem(x,y);
-	  if(item == 1 || item == -1){
-	    bm.setPow(item);
-	  }else if(item == 2 || item == -2){
-	    bm.addMax(item);
-	  }else if(item == 3 || item == -3){
-	    bm.isPanatrate(item);
-	  }
+    // テスト用 アイテムについて
+    item = map.getItem(x, y);
+    if (item == 1 || item == -1) {
+      bm.setPow(item);
+    } else if (item == 2 || item == -2) {
+      bm.addMax(item);
+    } else if (item == 3 || item == -3) {
+      bm.isPanatrate(item);
+    }
     if (isLive == true) {
       if (map.effHit(x, y) == true) {
         isLive = false;
@@ -94,7 +95,7 @@ class Player implements Observer, Common {
     }
   }
 
-  public NetworkPlayer getPlayer(){
+  public NetworkPlayer getPlayer() {
     return new NetworkPlayer(x, y, direction);
   }
 
