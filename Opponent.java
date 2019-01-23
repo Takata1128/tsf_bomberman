@@ -44,6 +44,7 @@ class Opponent implements Observer, Common {
   }
 
   public void draw(Graphics g) {
+    map.getItem(x, y);
     g.drawImage(image, x * CS, y * CS, x * CS + CS, y * CS + CS, count * CS, direction * CS, count * CS + CS,
         direction * CS + CS, panel);
   }

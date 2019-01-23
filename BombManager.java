@@ -13,7 +13,7 @@ class BombManager implements Common {
   private int num = 0;
   private int setMax = 1; // 設置できる最大数
   public  int bombPow = 1; // 爆弾の範囲
-  private boolean pane = false;
+  public  boolean pane = false;
   private Map map;
 
   public BombManager(String filename1, String filename2, Map map, GamePanel panel) {
@@ -35,6 +35,16 @@ class BombManager implements Common {
   public void set(int x, int y) {
     if (num < setMax) {
       bomb[num] = new Bomb(x, y, bombImage, effImage, bombPow, panel, map, pane);
+      isSet[num] = 1;
+      map.set(x, y, 3);
+      System.out.println("Bomb set: " + num);
+      num++;
+    }
+  }
+
+  public void set2(int x, int y, int pow, boolean pn) {
+    if (num < setMax) {
+      bomb[num] = new Bomb(x, y, bombImage, effImage, pow, panel, map, pn);
       isSet[num] = 1;
       map.set(x, y, 3);
       System.out.println("Bomb set: " + num);

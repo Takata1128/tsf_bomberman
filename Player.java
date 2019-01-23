@@ -70,7 +70,7 @@ class Player implements Observer, Common {
     if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
       network.send(getPlayer());
     } else if (dir == BOMB) {
-      network.send(new NetworkBomb(x, y, bm.bombPow));
+      network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
     }
     panel.repaint();
   }
@@ -88,6 +88,9 @@ class Player implements Observer, Common {
     if (isLive == true) {
       if (map.effHit(x, y) == true) {
         isLive = false;
+        NetworkWin nwin = new NetworkWin();
+        network.send(nwin);
+        network.close();
       }
       bm.draw(g);
       g.drawImage(image, x * CS, y * CS, x * CS + CS, y * CS + CS, count * CS, direction * CS, count * CS + CS,

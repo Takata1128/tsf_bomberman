@@ -64,7 +64,7 @@ class GamePanel extends JPanel implements Runnable, Common, NetworkCallback{
   }
 
   public void bombCallback(NetworkBomb nbomb){
-    bombManager.set(nbomb.x, nbomb.y);
+    bombManager.set2(nbomb.x, nbomb.y, nbomb.power, nbomb.is_pane());
   }
 
   public void mapCallback(NetworkMap nmap){
@@ -77,6 +77,11 @@ class GamePanel extends JPanel implements Runnable, Common, NetworkCallback{
     map.im.num = nitem.num;
     map.im.setMax = nitem.num;
     map.im.reset(nitem);
+  }
+
+  public void winCallback(NetworkWin nwin){
+    mp.setstate(RESULT_SCENE);
+    network.close();
   }
 
   //相手からのデータを待ち受ける
