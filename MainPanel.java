@@ -8,8 +8,6 @@ class MainPanel extends JPanel implements Runnable, Common {
   private static final int WIDTH = 480;
   private static final int HEIGHT = 480;
 
-  private Map map;
-  private Player p1;
   private Thread mainLoop;
   private StartPanel sp;
   private GamePanel gp;
@@ -22,10 +20,6 @@ class MainPanel extends JPanel implements Runnable, Common {
     // パネルの推奨サイズを設定
     setLayout(new GridLayout(1, 1, 0, 0));
     setPreferredSize(new Dimension(WIDTH, HEIGHT));
-    // gp = new GamePanel(this);
-    // this.add(gp);
-    // state = GAME_SCENE;
-    // oldState = GAME_SCENE;
     sp = new StartPanel(this);
     this.add(sp);
     state = TITLE_SCENE;
@@ -49,22 +43,27 @@ class MainPanel extends JPanel implements Runnable, Common {
           gp.removeAll();
           removeAll();
           System.out.println("GamePanel was removed.");
-        } else if (oldState == RESULT_SCENE) {
+        } else if (oldState == RESULT_WIN||oldState == RESULT_LOSE) {
           remove(rp);
           System.out.println("ResultPanel was removed.");
         }
-        if (state == TITLE_SCENE) {
+        if (state == TITLE_SCENE) {//タイトルシーン
           sp = new StartPanel(this);
           this.add(sp);
           sp.requestFocus();// キー入力のため
           System.out.println("StartPanel was added.");
-        } else if (state == GAME_SCENE) {
+        } else if (state == GAME_SCENE) {//ゲームシーン
           gp = new GamePanel(this);
           this.add(gp);
           gp.requestFocus();// キー入力のため
           System.out.println("GamePanel was added.");
-        } else if (state == RESULT_SCENE) {
-          rp = new ResultPanel(this);
+        } else if (state == RESULT_WIN) {//勝利シーン
+          rp = new ResultPanel(this,WIN);
+          this.add(rp);
+          rp.requestFocus();// キー入力のため
+          System.out.println("ResultPanel was added.");
+        } else if(state == RESULT_LOSE){//敗北シーン
+          rp = new ResultPanel(this,LOSE);
           this.add(rp);
           rp.requestFocus();// キー入力のため
           System.out.println("ResultPanel was added.");

@@ -80,7 +80,7 @@ class GamePanel extends JPanel implements Runnable, Common, NetworkCallback{
   }
 
   public void winCallback(NetworkWin nwin){
-    mp.setstate(RESULT_SCENE);
+    mp.setstate(RESULT_WIN);
     network.close();
   }
 
@@ -127,7 +127,7 @@ class GamePanel extends JPanel implements Runnable, Common, NetworkCallback{
     while (true) {// ゲームループ
       repaint();
       if (!p1.isLive) {// 死んだらリザルトに
-        mp.setstate(RESULT_SCENE);
+        mp.setstate(RESULT_LOSE);
         break;
       }
       try {
