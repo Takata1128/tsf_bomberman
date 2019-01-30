@@ -19,11 +19,10 @@ class SingleGamePanel extends GamePanel implements Runnable, Common{
     setFocusable(true);
     addKeyListener(controller);
     //サーバーかクライアントかによってプレイヤーの生成位置を決定
-    //TODO: NetworkManagerインスタンス化時に接続待ちが発生するので、その時のviewをどうするか考える
     map = new Map(this);
     bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
     p1 = new Player(1, 1, true,"image/BMW.png", map, this, controller, bombManager);// プレイヤー生成
-    p2 = new Player(map.col-2, map.row-2, false, "image/BMW.png", map, this, controller, bombManager);// プレイヤー生成
+    p2 = new Player(map.col-2, map.row-2, false, "image/BMR.png", map, this, controller, bombManager);// プレイヤー生成
     
     // ゲームループ開始
     gameLoop = new Thread(this);
