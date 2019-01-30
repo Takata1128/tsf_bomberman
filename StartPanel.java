@@ -14,6 +14,7 @@ class StartPanel extends JPanel implements Observer, Common {
     private String titleImageName;
     private BufferedImage titleImage;
     private int mode=0;
+    JTextField input_IP;
 
     public StartPanel(MainPanel mp) {
         // キーコントローラー追加
@@ -28,9 +29,13 @@ class StartPanel extends JPanel implements Observer, Common {
         } catch (IOException e) {
             System.out.println("image file not found. [" + titleImageName + "]");
         }
-        // てきとう
-        setLayout(null);
-        setBackground(Color.white);
+        JPanel p = new JPanel();
+        input_IP = new JTextField("IPアドレスをいれてね(クライアントモードのみ）",20);
+        p.add(input_IP);
+        this.add(p,BorderLayout.NORTH);
+        input_IP.addActionListener(event->{
+            input_IP.transferFocus();
+        });
         // キー入力もらう
         addKeyListener(controller);
         setFocusable(true);
@@ -75,6 +80,14 @@ class StartPanel extends JPanel implements Observer, Common {
             g.setColor(Color.red);
             g.drawString(client_play, x, y + 80);
         }
+        if(mode == 3){
+            g.setColor(Color.black);
+            g.drawString("マッチングを待っています...", x, y);
+        }
+        if(mode == 4){
+            g.setColor(Color.black);
+            g.drawString("対戦相手を探しています...", x, y);
+        }
     }
 
     // キー入力に反応
@@ -101,10 +114,15 @@ class StartPanel extends JPanel implements Observer, Common {
             else if (mode == 1) {// サーバーできどう
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=true;
+                mode=3;
+                repaint();
                 mp.setstate(MULTI_GAME_SCENE);
             } else if (mode == 2) {// クライアントできどう
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=false;
+                String ip = input_IP.getText();
+                mode=4;
+                repaint();
                 mp.setstate(MULTI_GAME_SCENE);
             }
             break;
