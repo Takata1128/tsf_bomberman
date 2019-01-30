@@ -44,27 +44,36 @@ class StartPanel extends JPanel implements Observer, Common {
         // 画像描画
         g.drawImage(titleImage, 0, 0, null);
         // 以下文字列のためのあれこれ
-        String server_play = "サーバーモードできどう";
-        String client_play = "クライアントモードできどう";
+        String single_play = "１台でプレイ";
+        String server_play = "サーバーモード";
+        String client_play = "クライアントモード";
         Font f = new Font("Serif", Font.PLAIN, 40);
         g.setFont(f);
         FontMetrics fm = g.getFontMetrics();
         Rectangle rectText = fm.getStringBounds(server_play, g).getBounds();
         int x = size.width / 2 - rectText.width / 2;
         int y = size.height / 2 - rectText.height / 2 + fm.getMaxAscent();
-        if (mode == 0) {
+        if(mode==0){
             g.setColor(Color.red);
-            // 中央に表示するためのあれこれ
-            g.drawString(server_play, x, y);
+            g.drawString(single_play, x, y);
             g.setColor(Color.black);
-            g.drawString(client_play, x, y + 40);
+            g.drawString(server_play, x, y + 40);
+            g.drawString(client_play, x, y + 80);
         }
         if (mode == 1) {
             g.setColor(Color.black);
-            // 中央に表示するためのあれこれ
-            g.drawString(server_play, x, y);
+            g.drawString(single_play, x, y);
             g.setColor(Color.red);
-            g.drawString(client_play, x, y + 40);
+            g.drawString(server_play, x, y + 40);
+            g.setColor(Color.black);
+            g.drawString(client_play, x, y + 80);
+        }
+        if (mode == 2) {
+            g.setColor(Color.black);
+            g.drawString(single_play, x, y);
+            g.drawString(server_play, x, y + 40);
+            g.setColor(Color.red);
+            g.drawString(client_play, x, y + 80);
         }
     }
 
@@ -75,27 +84,30 @@ class StartPanel extends JPanel implements Observer, Common {
         case UP:
             mode--;
             if (mode == -1)
-                mode = 1;
-            mode %= 2;
+                mode = 2;
+            mode %= 3;
             repaint();
             break;
         case DOWN:
             mode++;
-            mode %= 2;
+            mode %= 3;
             repaint();
             break;
         case BOMB:// Bボタン押されたら
-            if (mode == 0) {// サーバーできどう
+            if(mode == 0){
+                System.out.println("startPanel->gamePanel");
+                mp.setstate(SINGLE_GAME_SCENE);
+            }
+            else if (mode == 1) {// サーバーできどう
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=true;
-                mp.setstate(GAME_SCENE);
-            } else if (mode == 1) {// クライアントできどう
+                mp.setstate(MULTI_GAME_SCENE);
+            } else if (mode == 2) {// クライアントできどう
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=false;
-                mp.setstate(GAME_SCENE);
+                mp.setstate(MULTI_GAME_SCENE);
             }
             break;
-        // TODO:Sでサーバー側起動、Cでクライアント側起動
         }
     }
 }

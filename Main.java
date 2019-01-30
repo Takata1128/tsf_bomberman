@@ -14,8 +14,9 @@ class Main extends JFrame {
 	}
 
 	public static void main(String argv[]) {
-		boolean is_server;
 		/*
+		boolean is_server;
+
 		System.out.println(argv[0]);
 		if (argv[0].equals("s")) {
 			is_server = true;

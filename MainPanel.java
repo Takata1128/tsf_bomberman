@@ -39,7 +39,7 @@ class MainPanel extends JPanel implements Runnable, Common {
         if (oldState == TITLE_SCENE) {
           remove(sp);
           System.out.println("StartPanel was removed.");
-        } else if (oldState == GAME_SCENE) {
+        } else if (oldState == MULTI_GAME_SCENE||oldState== SINGLE_GAME_SCENE) {
           gp.removeAll();
           removeAll();
           System.out.println("GamePanel was removed.");
@@ -50,22 +50,27 @@ class MainPanel extends JPanel implements Runnable, Common {
         if (state == TITLE_SCENE) {//タイトルシーン
           sp = new StartPanel(this);
           this.add(sp);
-          sp.requestFocus();// キー入力のため
+          sp.requestFocus();
           System.out.println("StartPanel was added.");
-        } else if (state == GAME_SCENE) {//ゲームシーン
-          gp = new GamePanel(this);
+        } else if (state == MULTI_GAME_SCENE) {//マルチゲームシーン
+          gp = new MultiGamePanel(this);
           this.add(gp);
-          gp.requestFocus();// キー入力のため
+          gp.requestFocus();
+          System.out.println("GamePanel was added.");
+        } else if (state == SINGLE_GAME_SCENE){//シングルゲームシーン
+          gp = new SingleGamePanel(this);
+          this.add(gp);
+          gp.requestFocus();
           System.out.println("GamePanel was added.");
         } else if (state == RESULT_WIN) {//勝利シーン
           rp = new ResultPanel(this,WIN);
           this.add(rp);
-          rp.requestFocus();// キー入力のため
+          rp.requestFocus();
           System.out.println("ResultPanel was added.");
         } else if(state == RESULT_LOSE){//敗北シーン
           rp = new ResultPanel(this,LOSE);
           this.add(rp);
-          rp.requestFocus();// キー入力のため
+          rp.requestFocus();
           System.out.println("ResultPanel was added.");
         }
         validate();

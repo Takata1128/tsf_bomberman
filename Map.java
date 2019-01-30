@@ -1,23 +1,28 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Map implements Common {
   // 行数（単位：マス）
-  private static final int ROW = 15;
+  public int row=15;
   // 列数（単位：マス）
-  private static final int COL = 15;
-
+  public int col=15;
+  
   // マップ 0:床 1:壁
-  private int[][] map = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
-      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
-
+  private int[][] map;/*
+                       * = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, { 1, 0, 0, 0, 0, 0, 0,
+                       * 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, {
+                       * 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1,
+                       * 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0,
+                       * 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                       * 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0,
+                       * 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+                       * 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0,
+                       * 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                       * { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+                       */
   // チップセット
   private Image floorImage;
   private Image wallImage;
@@ -31,17 +36,16 @@ public class Map implements Common {
   public ItemManager im;
   private double random;
   private int forReturn;
-  private NetworkManager network;
-
-  public Map(GamePanel panel, NetworkManager network) {
+  private NetworkManager network=null;
+  public Map(GamePanel panel) {
     // イメージをロード
-    this.network = network;
     loadImage();
-    im = new ItemManager(this, panel, network);
-    for (int i = 1; i < ROW - 1; i++) {
-      for (int j = 1; j < ROW; j++) {
-        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2) && !(i == 13 && j == 13)
-            && !(i == 13 && j == 12) && !(i == 12 && j == 13)) {
+    load("map2.txt");
+    im = new ItemManager(this, panel);
+    for (int i = 1; i < row - 1; i++) {
+      for (int j = 1; j < col - 1; j++) {
+        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2)
+            && !(i == row - 2 && j == col - 2) && !(i == row - 3 && j == col - 2) && !(i == row - 2 && j == col - 3)) {
           double r = Math.random();
           if (r < 0.6)
             map[i][j] = 2;
@@ -51,9 +55,45 @@ public class Map implements Common {
     setItem();
   }
 
+  public Map(GamePanel panel, NetworkManager network) {
+    // イメージをロード
+    this.network = network;
+    loadImage();
+    load("map2.txt");
+    im = new ItemManager(this, panel, network);
+    for (int i = 1; i < row - 1; i++) {
+      for (int j = 1; j < col - 1; j++) {
+        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2)
+            && !(i == row - 2 && j == col - 2) && !(i == row - 3 && j == col - 2) && !(i == row - 2 && j == col - 3)) {
+          double r = Math.random();
+          if (r < 0.6)
+            map[i][j] = 2;
+        }
+      }
+    }
+    setItem();
+  }
+
+  private void load(String filename) {
+    try {
+      BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
+      String line = br.readLine();
+      // マップを作成
+      map = new int[row][col];
+      for (int i = 0; i < row; i++) {
+        line = br.readLine();
+        for (int j = 0; j < col; j++) {
+          map[i][j] = Integer.parseInt(line.charAt(j) + "");
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public void draw(Graphics g) {
-    for (int i = 0; i < ROW; i++) {
-      for (int j = 0; j < COL; j++) {
+    for (int i = 0; i < row; i++) {
+      for (int j = 0; j < col; j++) {
         // mapの値に応じて画像を描く
         switch (map[i][j]) {
         case 0: // 床
@@ -128,8 +168,8 @@ public class Map implements Common {
   }
 
   private void setItem() {
-    for (int i = 0; i < ROW; i++) {
-      for (int j = 0; j < COL; j++) {
+    for (int i = 0; i < row; i++) {
+      for (int j = 0; j < col; j++) {
         if (map[i][j] == 2) {
           random = Math.random();
           im.set(j, i, random);

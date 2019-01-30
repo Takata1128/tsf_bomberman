@@ -11,7 +11,13 @@ class ItemManager implements Common {
   private Image image1, image2, image3, image4, image5, image6;
   private GamePanel panel;
   private Map map;
-  private NetworkManager network;
+  private NetworkManager network=null;
+
+  public ItemManager(Map map, GamePanel panel) {
+    loadImage();
+    this.map = map;
+    this.panel = panel;
+  }
 
   public ItemManager(Map map, GamePanel panel, NetworkManager network) {
     loadImage();
@@ -43,8 +49,10 @@ class ItemManager implements Common {
 
   public void set(int x, int y, double r) {
     double decItem = Math.random();
-    if (!network.is_server)
-      return;
+    if(network!=null){
+      if (!network.is_server)
+        return;
+    }
     int img_num = 6, eff = -3;
     if (num < max) {
       if (r >= 0.4) {// プラスの効果 60％
@@ -64,8 +72,10 @@ class ItemManager implements Common {
           img_num = 5;
           eff = 3;
         }
-        NetworkItem nitem = new NetworkItem(x, y, num, img_num, eff);
-        network.send(nitem);
+        if(network!=null){
+          NetworkItem nitem = new NetworkItem(x, y, num, img_num, eff);
+          network.send(nitem);
+        }
         num++;
 
       } else if (r >= 0.2 && r < 0.4) {// マイナスの効果 20％
@@ -85,9 +95,10 @@ class ItemManager implements Common {
           img_num = 6;
           eff = -3;
         }
-        NetworkItem nitem = new NetworkItem(x, y, num, img_num, eff);
-        network.send(nitem);
-        num++;
+        if(network!=null){
+          NetworkItem nitem = new NetworkItem(x, y, num, img_num, eff);
+          network.send(nitem);
+        }num++;
       } // ハズレ 20%
     }
   }
