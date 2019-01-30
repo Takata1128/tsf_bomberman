@@ -23,13 +23,15 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     int px, py, ox, oy;
     opponentController = new OpponentController();
     if(mp.is_server){
-      network = new NetworkManager(mp.is_server, this);
+      network = mp.network;
+      network.setCallback(this);
       map = new Map(this, network);
       network.send(map.getNetworkMap());
       px = py = 1;
       ox = oy = map.col-2;
     }else{
-      network = new NetworkManager(mp.is_server, this);
+      network = mp.network;
+      network.setCallback(this);
       map = new Map(this, network);
       px = py = map.row-2;
       ox = oy = 1;

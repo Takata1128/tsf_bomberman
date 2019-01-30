@@ -129,9 +129,7 @@ class Player implements Observer, Common {
         bm.set(x, y);
       break;
     }
-    if (network != null)
-
-    {
+    if (network != null) {
       if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
         network.send(getPlayer());
       }

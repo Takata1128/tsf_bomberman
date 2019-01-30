@@ -47,7 +47,8 @@ class CommServer {
       in = new BufferedReader(new InputStreamReader(clientS.getInputStream()));
     } catch (IOException e) {
       System.err.println("Acceptに失敗しました。");
-      System.exit(1);
+      //System.exit(1);
+      return false;
     }
     return true;
   }
@@ -129,10 +130,12 @@ class CommClient {
       out = new PrintWriter(clientS.getOutputStream(), true);
     } catch (UnknownHostException e) {
       System.err.println("ホストに接続できません。");
-      System.exit(1);
+      // System.exit(1);
+      return false;
     } catch (IOException e) {
       System.err.println("IOコネクションを得られません。");
-      System.exit(1);
+      //System.exit(1);
+      return false;
     }
     return true;
   }

@@ -114,6 +114,10 @@ class StartPanel extends JPanel implements Observer, Common {
             else if (mode == 1) {// サーバーできどう
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=true;
+                mp.network = new NetworkManager();
+                if(!mp.network.connect()){
+                  break;
+                }
                 mode=3;
                 repaint();
                 mp.setstate(MULTI_GAME_SCENE);
@@ -121,6 +125,10 @@ class StartPanel extends JPanel implements Observer, Common {
                 System.out.println("startPanel->gamePanel");
                 mp.is_server=false;
                 String ip = input_IP.getText();
+                mp.network = new NetworkManager(ip);
+                if(!mp.network.connect()){
+                  break;
+                }
                 mode=4;
                 repaint();
                 mp.setstate(MULTI_GAME_SCENE);
