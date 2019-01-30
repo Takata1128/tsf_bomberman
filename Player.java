@@ -90,10 +90,10 @@ class Player implements Observer, Common {
       }
       break;
     case BOMB:
-      if (network!=null&&bm.isset()) {
+      if (network != null && bm.isset()) {
         network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
       }
-      if(is_1p)
+      if (is_1p)
         bm.set(x, y);
       break;
     case P2_LEFT:
@@ -128,13 +128,13 @@ class Player implements Observer, Common {
       if (!is_1p)
         bm.set(x, y);
       break;
-    }if(network!=null)
-
-  {
-    if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
-      network.send(getPlayer());
     }
-  }panel.repaint();
+    if (network != null) {
+      if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
+        network.send(getPlayer());
+      }
+    }
+    panel.repaint();
   }
 
   public void draw(Graphics g) {
@@ -150,7 +150,7 @@ class Player implements Observer, Common {
     if (isLive == true) {
       if (map.effHit(x, y) == true) {
         isLive = false;
-        if(network!=null){
+        if (network != null) {
           NetworkWin nwin = new NetworkWin();
           network.send(nwin);
           network.close();

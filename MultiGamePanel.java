@@ -17,14 +17,11 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
   public MultiGamePanel(MainPanel mp) {
     super(mp);
     this.mp = mp;
-    controller = new KeyController();// キーコントローラー生成
-    // キー入力受付
-    setFocusable(true);
+    controller = new KeyController();
+     setFocusable(true);
     addKeyListener(controller);
     int px, py, ox, oy;
     opponentController = new OpponentController();
-    //サーバーかクライアントかによってプレイヤーの生成位置を決定
-    //TODO: NetworkManagerインスタンス化時に接続待ちが発生するので、その時のviewをどうするか考える
     if(mp.is_server){
       network = mp.network;
       network.setCallback(this);
@@ -40,9 +37,8 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
       ox = oy = 1;
     }
     bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
-    p1 = new Player(px, py, "image/BMW.png", map, this, controller, network, bombManager);// プレイヤー生成
-    opponent = new Opponent(ox, oy, "image/BMW.png", map, this, opponentController);
-    // ゲームループ開始
+    p1 = new Player(px, py, "image/BMW.png", map, this, controller, network, bombManager);
+    opponent = new Opponent(ox, oy, "image/BMR.png", map, this, opponentController);
     gameLoop = new Thread(this);
     gameLoop.start();
 
@@ -89,49 +85,19 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     network.close();
   }
 
-  //相手からのデータを待ち受ける
-  //受信した情報に応じて処理を分ける
-  // private class NetworkThread extends Thread{
-  //   public void run(){
-  //     while(true){
-  //       NetworkObject obj = network.recv();
-  //       if (obj == null) {
-  //         continue;
-  //       } else if (obj instanceof NetworkPlayer) {
-  //         System.out.println("===NetworkPlayer===");
-  //         NetworkPlayer player = (NetworkPlayer) obj;
-  //         System.out.println("x:" + player.x + " y:" + player.y + " dir:" + player.direction);
-  //         opponentController.setState(player);
-  //       } else if (obj instanceof NetworkBomb) {
-  //         System.out.println("===NetworkBomb===");
-  //         NetworkBomb nbomb = (NetworkBomb) obj;
-  //         System.out.println(nbomb.x + " " + nbomb.y);
-  //         bombManager.set(nbomb.x, nbomb.y);
-  //       } else if (obj instanceof NetworkMap) {
-  //         System.out.println("===NetworkMap===");
-  //         NetworkMap nmap = (NetworkMap) obj;
-  //         map.setNetworkMap(nmap);
-  //         repaint();
-  //       }
-  //     }
-  //   }
-  // }
-
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    // マップを描く
     map.draw(g);
 
-    // プレイヤーを描く
     p1.draw(g);
     opponent.draw(g);
   }
 
   public void run() {
-    while (true) {// ゲームループ
+    while (true) {
       repaint();
-      if (!p1.isLive) {// 死んだらリザルトに
+      if (!p1.isLive) {
         mp.setstate(RESULT_LOSE);
         break;
       }
