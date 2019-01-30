@@ -74,7 +74,7 @@ class CommServer {
       return null;
     } catch (IOException e) {
       System.err.println("受信に失敗しました。");
-      System.exit(1);
+      //System.exit(1);
     }
     return msg;
   }
