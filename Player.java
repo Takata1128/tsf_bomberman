@@ -89,6 +89,14 @@ class Player implements Observer, Common {
       }
       break;
     case BOMB:
+    if (network!=null&&bm.isset()) {
+      network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
+    }
+    if(is_1p)
+      bm.set(x, y);
+    break;
+  }
+<<<<<<< HEAD
       if (is_1p)
         bm.set(x, y);
       break;
@@ -128,9 +136,7 @@ class Player implements Observer, Common {
     if (network != null) {
       if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
         network.send(getPlayer());
-      } else if (dir == BOMB) {
-        network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
-      }
+      } 
     }
     panel.repaint();
   }

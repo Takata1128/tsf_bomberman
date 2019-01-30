@@ -7,10 +7,13 @@ class BombManager implements Common {
 
   private int max = 100; // 爆弾の上限
   private Bomb[] bomb = new Bomb[max];
+  private Bomb[] bomb2 = new Bomb[max];
   private int[] isSet = new int[max];
+  private int[] isSet2 = new int[max];
   private Image bombImage, effImage;
   private GamePanel panel;
   private int num = 0;
+  private int num2 = 0;
   private int setMax = 1; // 設置できる最大数
   public  int bombPow = 1; // 爆弾の範囲
   public  boolean pane = false;
@@ -20,7 +23,6 @@ class BombManager implements Common {
     loadImage(filename1, filename2);
     this.map = map;
     this.panel = panel;
-
   }
 
   private void loadImage(String filename1, String filename2) {
@@ -29,6 +31,10 @@ class BombManager implements Common {
 
     icon = new ImageIcon(getClass().getResource(filename2));
     effImage = icon.getImage();
+  }
+
+  public boolean isset(){
+    return num < setMax;
   }
 
   // 爆弾セット
@@ -43,13 +49,11 @@ class BombManager implements Common {
   }
 
   public void set2(int x, int y, int pow, boolean pn) {
-    if (num < setMax) {
-      bomb[num] = new Bomb(x, y, bombImage, effImage, pow, panel, map, pn);
-      isSet[num] = 1;
-      map.set(x, y, 3);
-      System.out.println("Bomb set: " + num);
-      num++;
-    }
+    bomb2[num2] = new Bomb(x, y, bombImage, effImage, pow, panel, map, pn);
+    isSet2[num2] = 1;
+    map.set(x, y, 3);
+    System.out.println("Bomb set: " + num2);
+    num2++;
   }
 
   // ボムの範囲拡大(アイテム用)
@@ -94,6 +98,18 @@ class BombManager implements Common {
           num--;
           if (num < 0) {
             num = 0;
+          }
+        }
+      }
+    }
+
+    for(int i = 0; i < max; i++){
+      if (isSet2[i] == 1) {
+        bomb2[i].draw(g);
+        if (map.get(bomb2[i].getX(), bomb2[i].getY()) == 4) {
+          num2--;
+          if (num2 < 0) {
+            num2 = 0;
           }
         }
       }

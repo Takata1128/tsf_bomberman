@@ -1,8 +1,11 @@
+import java.net.*;
 //[責務] Commライブラリのラ(ClientとServerの差異吸収)
 interface CommWrap {
   void send(String msg);
 
   String recv();
+
+  boolean connect();
 
   void close();
 }
@@ -10,10 +13,26 @@ interface CommWrap {
 // [責務] Commライブラリのclient実装
 class GameClient implements CommWrap {
   private CommClient cl = null;
+  private String host;
+  private int port;
 
   GameClient() {
     cl = new CommClient("localhost", 1025);
     cl.setTimeout(1); // non-wait で通信
+  }
+
+  GameClient(String host, int port) {
+    cl = new CommClient();
+    this.host = host;
+    this.port = port;
+  }
+
+  public boolean connect() {
+    boolean is_connect = cl.open(host, port);
+    if (is_connect) {
+      cl.setTimeout(1);
+    }
+    return is_connect;
   }
 
   @Override
@@ -28,6 +47,7 @@ class GameClient implements CommWrap {
       return null;
     return msg;
   }
+
   @Override
   public void close() {
     cl.close();
@@ -37,11 +57,26 @@ class GameClient implements CommWrap {
 // [責務] Commライブラリのserver実装
 class GameServer implements CommWrap {
   private CommServer sv = null;
+  int port;
 
   GameServer() {
     sv = new CommServer(1025);
     sv.setTimeout(1); // non-wait で通信
     System.out.println("Connected !");
+  }
+
+  GameServer(int port) {
+    sv = new CommServer();
+    this.port = port;
+  }
+
+  @Override
+  public boolean connect() {
+    boolean is_connect = sv.open(port);
+    if (is_connect) {
+      sv.setTimeout(1);
+    }
+    return is_connect;
   }
 
   @Override
@@ -238,12 +273,12 @@ class NetworkItem implements NetworkObject {
   }
 }
 
-class NetworkWin implements NetworkObject{
+class NetworkWin implements NetworkObject {
   int id = 5;
-  int score = 100000; //ダミー
-  int is_win = 1;     //ダミー
+  int score = 100000; // ダミー
+  int is_win = 1; // ダミー
 
-  NetworkWin(){
+  NetworkWin() {
     this.id = 5;
   }
 
@@ -279,6 +314,26 @@ class NetworkManager {
     } else {
       network = new GameClient();
     }
+  }
+
+  // Serverモードの場合
+  NetworkManager() {
+    network = new GameServer(54322);
+    is_server = true;
+  }
+
+  // Clientモードの場合
+  NetworkManager(String host) {
+    network = new GameClient(host, 54322);
+    is_server = false;
+  }
+
+  public boolean connect() {
+    return network.connect();
+  }
+
+  public void setCallback(NetworkCallback callback) {
+    this.callback = callback;
   }
 
   // NetworkObjectを受け取って文字列に変換して送信
@@ -321,14 +376,14 @@ class NetworkManager {
     } else if (id == 4) {
       obj = new NetworkItem();
       obj.toRecvFormat(data);
-    } else if(id == 5){
+    } else if (id == 5) {
       obj = new NetworkWin();
       obj.toRecvFormat(data);
     }
     return obj;
   }
 
-  public void close(){
+  public void close() {
     network.close();
   }
 
@@ -377,32 +432,21 @@ interface NetworkCallback {
   public void winCallback(NetworkWin win);
 }
 
-// public class Network {
-// public static void main(String[] arg) {
-// boolean is_server = false;
-// String recvMessage = "Server";
-// String sendMessage = "Clinet";
-// if(arg[0].equals("s")){
-// is_server = true;
-// recvMessage = "Client";
-// sendMessage = "Server";
-// }
-// NetworkManager nm = new NetworkManager(is_server);
-// int x = 0, y = 0;
-// int bomb_x = 0, bomb_y = 0;
-// for (int i = 0; i < 100; i++) {
-// x += 1;
-// y += 1;
-// bomb_x *= x + y;
-// bomb_y += bomb_x - x;
-// if(is_server){
-// bomb_x = 10;
-// bomb_y = 10;
-// }
-// NetworkPlayer player = new NetworkPlayer(x, y, 2);
-// NetworkBomb bomb = new NetworkBomb(bomb_x, bomb_y, 1);
-// nm.send(player);
-// nm.send(bomb);
-// }
-// }
-// }
+class NetworkUtil {
+  public static String getHostName() {
+    try {
+      return InetAddress.getLocalHost().getHostName();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "UnknownHost";
+  }
+}
+
+public class Network {
+  public static void main(String[] arg) {
+    NetworkUtil util = new NetworkUtil();
+    String name = util.getHostName();
+    System.out.println(name);
+  }
+}
