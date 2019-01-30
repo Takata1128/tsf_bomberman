@@ -64,13 +64,15 @@ class Player implements Observer, Common {
       direction = DOWN;
       break;
     case BOMB:
+      if (bm.isset()) {
+        network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
+      }
       bm.set(x, y);
       break;
     }
+    
     if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
       network.send(getPlayer());
-    } else if (dir == BOMB) {
-      network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
     }
     panel.repaint();
   }

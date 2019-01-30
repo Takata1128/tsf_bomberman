@@ -1,19 +1,34 @@
 //[責務] Commライブラリのラ(ClientとServerの差異吸収)
 interface CommWrap {
   void send(String msg);
-
   String recv();
-
+  boolean connect();
   void close();
 }
 
 // [責務] Commライブラリのclient実装
 class GameClient implements CommWrap {
   private CommClient cl = null;
+  private String host;
+  private int port;
 
   GameClient() {
     cl = new CommClient("localhost", 1025);
     cl.setTimeout(1); // non-wait で通信
+  }
+
+  GameClient(String host, int port){
+    cl = new CommClient();
+    this.host = host;
+    this.port = port;
+  }
+
+  public boolean connect(){
+    boolean is_connect = cl.open(host, port);
+    if(is_connect){
+      cl.setTimeout(1);
+    }
+    return is_connect;
   }
 
   @Override
@@ -37,11 +52,26 @@ class GameClient implements CommWrap {
 // [責務] Commライブラリのserver実装
 class GameServer implements CommWrap {
   private CommServer sv = null;
+  int port;
 
   GameServer() {
     sv = new CommServer(1025);
     sv.setTimeout(1); // non-wait で通信
     System.out.println("Connected !");
+  }
+
+  GameServer(int port) {
+    sv = new CommServer();
+    this.port = port;
+  }
+
+  @Override
+  public boolean connect() {
+    boolean is_connect = sv.open(port);
+    if(is_connect){
+      sv.setTimeout(1);
+    }
+    return is_connect;
   }
 
   @Override
@@ -279,6 +309,26 @@ class NetworkManager {
     } else {
       network = new GameClient();
     }
+  }
+
+  //Serverモードの場合
+  NetworkManager(int port){
+    network = new GameServer(port);
+    is_server = true;
+  }
+
+  //Clientモードの場合
+  NetworkManager(String host, int port){
+    network = new GameClient(host, port);
+    is_server = false;
+  }
+
+  public boolean connect(){
+    return network.connect();
+  } 
+
+  public void setCallback(NetworkCallback callback){
+    this.callback = callback;
   }
 
   // NetworkObjectを受け取って文字列に変換して送信
