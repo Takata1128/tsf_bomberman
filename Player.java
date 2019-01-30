@@ -19,7 +19,8 @@ class Player implements Observer, Common {
   public boolean isLive = true;
   public boolean is_1p = true;
 
-  public Player(int x, int y, boolean is_1p,String filename, Map map, GamePanel panel, KeyController kc, BombManager bm) {
+  public Player(int x, int y, boolean is_1p, String filename, Map map, GamePanel panel, KeyController kc,
+      BombManager bm) {
     this.x = x;
     this.y = y;
     this.is_1p = is_1p;
@@ -89,15 +90,10 @@ class Player implements Observer, Common {
       }
       break;
     case BOMB:
-    if (network!=null&&bm.isset()) {
-      network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
-    }
-    if(is_1p)
-      bm.set(x, y);
-    break;
-  }
-<<<<<<< HEAD
-      if (is_1p)
+      if (network!=null&&bm.isset()) {
+        network.send(new NetworkBomb(x, y, bm.bombPow, bm.pane));
+      }
+      if(is_1p)
         bm.set(x, y);
       break;
     case P2_LEFT:
@@ -132,13 +128,13 @@ class Player implements Observer, Common {
       if (!is_1p)
         bm.set(x, y);
       break;
+    }if(network!=null)
+
+  {
+    if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
+      network.send(getPlayer());
     }
-    if (network != null) {
-      if (dir == LEFT || dir == RIGHT || dir == UP || dir == DOWN) {
-        network.send(getPlayer());
-      } 
-    }
-    panel.repaint();
+  }panel.repaint();
   }
 
   public void draw(Graphics g) {

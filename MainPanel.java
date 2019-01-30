@@ -15,6 +15,7 @@ class MainPanel extends JPanel implements Runnable, Common {
   private int state;
   private int oldState;
   public  boolean is_server;
+  public  NetworkManager network;
 
   public MainPanel() {
     // パネルの推奨サイズを設定

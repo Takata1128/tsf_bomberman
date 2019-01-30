@@ -26,13 +26,15 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     //サーバーかクライアントかによってプレイヤーの生成位置を決定
     //TODO: NetworkManagerインスタンス化時に接続待ちが発生するので、その時のviewをどうするか考える
     if(mp.is_server){
-      network = new NetworkManager(mp.is_server, this);
+      network = mp.network;
+      network.setCallback(this);
       map = new Map(this, network);
       network.send(map.getNetworkMap());
       px = py = 1;
       ox = oy = map.col-2;
     }else{
-      network = new NetworkManager(mp.is_server, this);
+      network = mp.network;
+      network.setCallback(this);
       map = new Map(this, network);
       px = py = map.row-2;
       ox = oy = 1;
