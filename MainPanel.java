@@ -1,7 +1,5 @@
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import java.awt.event.KeyListener;
 
 class MainPanel extends JPanel implements Runnable, Common {
   // パネルサイズ
@@ -16,6 +14,8 @@ class MainPanel extends JPanel implements Runnable, Common {
   private int oldState;
   public  boolean is_server;
   public  NetworkManager network;
+
+  public double block_cfg = 0.6;//コンフィグ用
 
   public MainPanel() {
     // パネルの推奨サイズを設定

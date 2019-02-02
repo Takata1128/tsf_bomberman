@@ -6,23 +6,13 @@ import java.io.InputStreamReader;
 
 public class Map implements Common {
   // 行数（単位：マス）
-  public int row=15;
+  public int row = 15;
   // 列数（単位：マス）
-  public int col=15;
+  public int col = 15;
   
   // マップ 0:床 1:壁
-  private int[][] map;/*
-                       * = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, { 1, 0, 0, 0, 0, 0, 0,
-                       * 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, {
-                       * 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1,
-                       * 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0,
-                       * 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                       * 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0,
-                       * 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-                       * 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, { 1, 0, 1, 0, 1, 0,
-                       * 1, 0, 1, 0, 1, 0, 1, 0, 1 }, { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-                       * { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
-                       */
+  private int[][] map;
+
   // チップセット
   private Image floorImage;
   private Image wallImage;
@@ -40,37 +30,18 @@ public class Map implements Common {
   public Map(GamePanel panel) {
     // イメージをロード
     loadImage();
-    load("map2.txt");
+    load("map.txt");
+    create_block(panel.block_cfg);
     im = new ItemManager(this, panel);
-    for (int i = 1; i < row - 1; i++) {
-      for (int j = 1; j < col - 1; j++) {
-        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2)
-            && !(i == row - 2 && j == col - 2) && !(i == row - 3 && j == col - 2) && !(i == row - 2 && j == col - 3)) {
-          double r = Math.random();
-          if (r < 0.6)
-            map[i][j] = 2;
-        }
-      }
-    }
     setItem();
   }
-
   public Map(GamePanel panel, NetworkManager network) {
     // イメージをロード
     this.network = network;
     loadImage();
-    load("map2.txt");
+    load("map.txt");
+    create_block(panel.block_cfg);
     im = new ItemManager(this, panel, network);
-    for (int i = 1; i < row - 1; i++) {
-      for (int j = 1; j < col - 1; j++) {
-        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2)
-            && !(i == row - 2 && j == col - 2) && !(i == row - 3 && j == col - 2) && !(i == row - 2 && j == col - 3)) {
-          double r = Math.random();
-          if (r < 0.6)
-            map[i][j] = 2;
-        }
-      }
-    }
     setItem();
   }
 
@@ -88,6 +59,19 @@ public class Map implements Common {
       }
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  void create_block(double p){
+    for (int i = 1; i < row - 1; i++) {
+      for (int j = 1; j < col - 1; j++) {
+        if (map[i][j] == 0 && !(i == 1 && j == 1) && !(i == 2 && j == 1) && !(i == 1 && j == 2)
+            && !(i == row - 2 && j == col - 2) && !(i == row - 3 && j == col - 2) && !(i == row - 2 && j == col - 3)) {
+          double r = Math.random();
+          if (r < p)
+            map[i][j] = 2;
+        }
+      }
     }
   }
 

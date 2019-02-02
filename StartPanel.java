@@ -1,8 +1,7 @@
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -13,8 +12,20 @@ class StartPanel extends JPanel implements Observer, Common {
     private MainPanel mp;
     private String titleImageName;
     private BufferedImage titleImage;
-    private int mode=0;
-    JTextField input_IP;
+    private int menu_num = 4;
+    private int mode = 0;
+    private final int max_mode = 4;
+    private int block_mode = 1;
+    private int max_block_mode = 3;
+    private JTextField input_IP;
+    // メニュー部分
+    int str_size = 20;
+    String single_play = "１台でプレイ";
+    String server_play = "サーバーモード";
+    String client_play = "クライアントモード";
+    String block_str = "ブロック：　ふつう";
+    String wait_matching = "マッチングを待っています";
+    String seak_opponent = "対戦相手を探しています";
 
     public StartPanel(MainPanel mp) {
         // キーコントローラー追加
@@ -26,14 +37,16 @@ class StartPanel extends JPanel implements Observer, Common {
         titleImageName = "image/title.png";
         try {
             titleImage = ImageIO.read(new File(titleImageName));
+            titleImage = changSize(titleImage, 480, 480);
         } catch (IOException e) {
             System.out.println("image file not found. [" + titleImageName + "]");
         }
+        // IP入力用フォーム
         JPanel p = new JPanel();
-        input_IP = new JTextField("IPアドレスをいれてね(クライアントモードのみ）",20);
+        input_IP = new JTextField("IPアドレスをいれてね(クライアントモードのみ）",20);     
         p.add(input_IP);
-        this.add(p,BorderLayout.NORTH);
-        input_IP.addActionListener(event->{
+        this.add(p, BorderLayout.NORTH);
+        input_IP.addActionListener(event -> {
             input_IP.transferFocus();
         });
         // キー入力もらう
@@ -43,50 +56,80 @@ class StartPanel extends JPanel implements Observer, Common {
         repaint();
     }
 
+    BufferedImage changSize(BufferedImage image, int width, int height) {
+        BufferedImage shrinkImage = new BufferedImage(width, height, image.getType());
+        Graphics2D g2d = shrinkImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        g2d.drawImage(image, 0, 0, width, height, null);
+        return shrinkImage;
+    }
+
     public void paintComponent(Graphics g) {
-        // ウィンドウサイズ取得
-        Dimension size = getSize();
         // 画像描画
         g.drawImage(titleImage, 0, 0, null);
-        // 以下文字列のためのあれこれ
-        String single_play = "１台でプレイ";
-        String server_play = "サーバーモード";
-        String client_play = "クライアントモード";
-        Font f = new Font("Serif", Font.PLAIN, 40);
+        drawMenu(g, menu_num);
+    }
+
+    void setStringCenter(Graphics g, String str, int str_size, int xdiff, int ydiff,Color color) {
+        // ウィンドウサイズ取得     
+        Dimension size = getSize();
+        Font f = new Font(Font.MONOSPACED, Font.PLAIN, str_size);
         g.setFont(f);
         FontMetrics fm = g.getFontMetrics();
-        Rectangle rectText = fm.getStringBounds(server_play, g).getBounds();
+        Rectangle rectText = fm.getStringBounds(str, g).getBounds();
         int x = size.width / 2 - rectText.width / 2;
         int y = size.height / 2 - rectText.height / 2 + fm.getMaxAscent();
-        if(mode==0){
-            g.setColor(Color.red);
-            g.drawString(single_play, x, y);
-            g.setColor(Color.black);
-            g.drawString(server_play, x, y + 40);
-            g.drawString(client_play, x, y + 80);
+        x += xdiff;
+        y += ydiff;
+        g.setColor(color);
+        g.drawString(str, x, y);
+    }
+
+    void drawMenu(Graphics g, int num) {
+        Dimension d = getSize();
+        int menu_width = 200, menu_height = 40 * num;
+        if(mode<=3){
+            g.setColor(new Color(0, 50, 255, 128));
+            g.fillRoundRect(d.width / 2 - menu_width / 2, d.height / 2 - str_size, menu_width, menu_height, 0, 0);
+        }
+
+        if (mode == 0) {
+            setStringCenter(g, single_play, str_size, 0, 0,Color.red);
+            setStringCenter(g, server_play, str_size, 0, 40,Color.black);
+            setStringCenter(g, client_play, str_size, 0, 80,Color.black);
+            setStringCenter(g, block_str, str_size, 0, 120, Color.black);
         }
         if (mode == 1) {
-            g.setColor(Color.black);
-            g.drawString(single_play, x, y);
-            g.setColor(Color.red);
-            g.drawString(server_play, x, y + 40);
-            g.setColor(Color.black);
-            g.drawString(client_play, x, y + 80);
+             setStringCenter(g, single_play, str_size, 0, 0,Color.black);
+            setStringCenter(g, server_play, str_size, 0, 40,Color.red);
+            setStringCenter(g, client_play, str_size, 0, 80,Color.black);
+            setStringCenter(g, block_str, str_size, 0, 120, Color.black);
         }
         if (mode == 2) {
-            g.setColor(Color.black);
-            g.drawString(single_play, x, y);
-            g.drawString(server_play, x, y + 40);
-            g.setColor(Color.red);
-            g.drawString(client_play, x, y + 80);
+            setStringCenter(g, single_play, str_size, 0, 0,Color.black);
+            setStringCenter(g, server_play, str_size, 0, 40,Color.black);
+            setStringCenter(g, client_play, str_size, 0, 80,Color.red);
+            setStringCenter(g, block_str, str_size, 0, 120, Color.black);
         }
-        if(mode == 3){
-            g.setColor(Color.black);
-            g.drawString("マッチングを待っています...", x, y);
+        if(mode==3){
+            setStringCenter(g, single_play, str_size, 0, 0,Color.black);
+            setStringCenter(g, server_play, str_size, 0, 40,Color.black);
+            setStringCenter(g, client_play, str_size, 0, 80,Color.black);
+            setStringCenter(g, block_str, str_size, 0, 120, Color.red);
         }
-        if(mode == 4){
-            g.setColor(Color.black);
-            g.drawString("対戦相手を探しています...", x, y);
+        if (mode == 4) {
+            setStringCenter(g, wait_matching, 20, 0, 0,Color.black);
+        }
+        if (mode == 5) {
+            setStringCenter(g, seak_opponent, 20, 0, 0,Color.black);
         }
     }
 
@@ -97,43 +140,65 @@ class StartPanel extends JPanel implements Observer, Common {
         case UP:
             mode--;
             if (mode == -1)
-                mode = 2;
-            mode %= 3;
-            repaint();
+                mode = max_mode - 1;
+            mode %= max_mode;
             break;
         case DOWN:
             mode++;
-            mode %= 3;
-            repaint();
+            mode %= max_mode;
+            break;
+        case LEFT:
+            if (mode == 3) {
+                block_mode--;
+                if (block_mode == -1)
+                    block_mode = max_block_mode - 1;
+                block_mode %= max_block_mode;
+            }
+            break;
+        case RIGHT:
+            if (mode == 3) {
+                block_mode++;
+                block_mode %= max_block_mode;
+            }
             break;
         case BOMB:// Bボタン押されたら
-            if(mode == 0){
+            if (mode == 0) {
                 System.out.println("startPanel->gamePanel");
                 mp.setstate(SINGLE_GAME_SCENE);
-            }
-            else if (mode == 1) {// サーバーできどう
+            } else if (mode == 1) {// サーバーできどう
                 System.out.println("startPanel->gamePanel");
-                mp.is_server=true;
-                mp.network = new NetworkManager();
-                if(!mp.network.connect()){
-                  break;
-                }
-                mode=3;
+                mp.is_server = true;
+                mode = 4;
                 repaint();
+                mp.network = new NetworkManager();
+                if (!mp.network.connect()) {
+                    break;
+                }
                 mp.setstate(MULTI_GAME_SCENE);
             } else if (mode == 2) {// クライアントできどう
                 System.out.println("startPanel->gamePanel");
-                mp.is_server=false;
+                mp.is_server = false;
+                mode = 5;
+                repaint();
                 String ip = input_IP.getText();
                 mp.network = new NetworkManager(ip);
-                if(!mp.network.connect()){
-                  break;
+                if (!mp.network.connect()) {
+                    break;
                 }
-                mode=4;
-                repaint();
                 mp.setstate(MULTI_GAME_SCENE);
             }
             break;
         }
+        if(block_mode==0){
+            block_str = "ブロック：　すくなめ";
+            mp.block_cfg=0.4;
+        }else if(block_mode==1){
+            block_str = "ブロック：　ふつう";
+            mp.block_cfg=0.6;
+        } else if(block_mode ==2 )  {
+            block_str = "ブロック：　おおめ";
+            mp.block_cfg=0.8;
+        }
+        repaint();
     }
 }

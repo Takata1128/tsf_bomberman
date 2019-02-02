@@ -1,15 +1,12 @@
 import java.awt.*;
-import javax.swing.*;
-import java.awt.event.KeyListener;
 
 class SingleGamePanel extends GamePanel implements Runnable, Common{
   private Map map;
   private Player p1,p2;
-  private Bomb bm;
   private KeyController controller;
   private Thread gameLoop;
   private MainPanel mp;
-  private BombManager bombManager;
+  private BombManager bm1,bm2;
 
   public SingleGamePanel(MainPanel mp) {
     super(mp);
@@ -20,9 +17,10 @@ class SingleGamePanel extends GamePanel implements Runnable, Common{
     addKeyListener(controller);
     //サーバーかクライアントかによってプレイヤーの生成位置を決定
     map = new Map(this);
-    bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
-    p1 = new Player(1, 1, true,"image/BMW.png", map, this, controller, bombManager);// プレイヤー生成
-    p2 = new Player(map.col-2, map.row-2, false, "image/BMR.png", map, this, controller, bombManager);// プレイヤー生成
+    bm1 = new BombManager("image/bomb.png", "image/eff.png", map, this);
+    bm2 = new BombManager("image/bomb.png", "image/eff.png", map, this);
+    p1 = new Player(1, 1, true,"image/BMW.png", map, this, controller, bm1);// プレイヤー生成
+    p2 = new Player(map.col-2, map.row-2, false, "image/BMR.png", map, this, controller, bm2);// プレイヤー生成
     
     // ゲームループ開始
     gameLoop = new Thread(this);
@@ -48,7 +46,7 @@ class SingleGamePanel extends GamePanel implements Runnable, Common{
         break;
       }
       if(!p2.isLive){
-          mp.setstate(RESULT_LOSE);
+          mp.setstate(RESULT_WIN);
           break;
       }
       try {

@@ -1,11 +1,8 @@
 import java.awt.*;
-import javax.swing.*;
-import java.awt.event.KeyListener;
 
 class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallback{
   private Map map;
   private Player p1;
-  private Bomb bm;
   private KeyController controller;
   private Thread gameLoop;
   private MainPanel mp;
@@ -18,7 +15,7 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     super(mp);
     this.mp = mp;
     controller = new KeyController();
-     setFocusable(true);
+    setFocusable(true);
     addKeyListener(controller);
     int px, py, ox, oy;
     opponentController = new OpponentController();
@@ -28,12 +25,14 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
       map = new Map(this, network);
       network.send(map.getNetworkMap());
       px = py = 1;
-      ox = oy = map.col-2;
+      ox = map.row-2;
+      oy = map.col-2;
     }else{
       network = mp.network;
       network.setCallback(this);
       map = new Map(this, network);
-      px = py = map.row-2;
+      px = map.row-2;
+      py = map.col-2;
       ox = oy = 1;
     }
     bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
@@ -82,7 +81,6 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     super.paintComponent(g);
 
     map.draw(g);
-
     p1.draw(g);
     opponent.draw(g);
   }
