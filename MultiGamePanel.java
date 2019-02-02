@@ -42,6 +42,13 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     gameLoop.start();
 
     network.start();
+
+    if(mp.is_server){
+      network.send(map.getNetworkMap());
+    }
+
+    //情報受信ループ
+    //new Thread(new NetworkThread()).start();
   }
 
   public void playerCallback(NetworkPlayer player){
