@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 class StartPanel extends JPanel implements Observer, Common {
     public KeyController controller;
@@ -18,6 +20,7 @@ class StartPanel extends JPanel implements Observer, Common {
     private int block_mode = 1;
     private int max_block_mode = 3;
     private JTextField input_IP;
+    private InetAddress addr;
     // メニュー部分
     int str_size = 20;
     String single_play = "１台でプレイ";
@@ -43,12 +46,25 @@ class StartPanel extends JPanel implements Observer, Common {
         }
         // IP入力用フォーム
         JPanel p = new JPanel();
-        input_IP = new JTextField("IPアドレスをいれてね(クライアントモードのみ）",20);     
+        p.setLayout(new GridLayout(3,1));
+        input_IP = new JTextField("IPアドレスをいれてね(クライアントモードのみ）",30);     
         p.add(input_IP);
-        this.add(p, BorderLayout.NORTH);
         input_IP.addActionListener(event -> {
             input_IP.transferFocus();
         });
+        try{
+            addr = InetAddress.getLocalHost();
+        }catch(UnknownHostException e){
+            e.printStackTrace();
+        }
+        JLabel host_name = new JLabel();
+        JLabel host_addr = new JLabel();
+        host_name.setText("Localhostname: "+ addr.getHostName());
+        host_addr.setText("Localaddress: "+addr.getHostAddress());
+        p.add(host_name);
+        p.add(host_addr);
+        this.add(p, BorderLayout.NORTH);
+        
         // キー入力もらう
         addKeyListener(controller);
         setFocusable(true);
