@@ -14,6 +14,7 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
   public MultiGamePanel(MainPanel mp) {
     super(mp);
     this.mp = mp;
+    //キー入力受付
     controller = new KeyController();
     setFocusable(true);
     addKeyListener(controller);
