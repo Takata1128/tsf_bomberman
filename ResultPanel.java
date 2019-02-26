@@ -2,7 +2,6 @@ import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -37,7 +36,7 @@ class ResultPanel extends JPanel implements Observer, Common {
             else resultImageName = "image/2p_win.png";
         }
         try {
-            resultImage = ImageIO.read(new File(resultImageName));
+            resultImage = ImageIO.read(getClass().getResource(resultImageName));
         } catch (IOException e) {
             System.out.println("image file not found. [" + resultImageName + "]");
         }

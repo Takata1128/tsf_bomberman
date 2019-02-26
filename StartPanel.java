@@ -2,7 +2,6 @@ import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -39,7 +38,7 @@ class StartPanel extends JPanel implements Observer, Common {
         // タイトル画像読み込み
         titleImageName = "image/title.png";
         try {
-            titleImage = ImageIO.read(new File(titleImageName));
+            titleImage = ImageIO.read(getClass().getResource(titleImageName));
             titleImage = changSize(titleImage, 480, 480);
         } catch (IOException e) {
             System.out.println("image file not found. [" + titleImageName + "]");

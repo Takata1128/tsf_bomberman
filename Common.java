@@ -21,6 +21,7 @@ public interface Common{
   public static final int RESULT_WIN = 3;
   public static final int RESULT_LOSE = 4;
 
+  //勝ち負け
   public static final boolean WIN = true;
   public static final boolean LOSE = false;
   

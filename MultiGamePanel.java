@@ -17,6 +17,7 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
     controller = new KeyController();
     setFocusable(true);
     addKeyListener(controller);
+    //サーバー側がマップを生成して通信
     int px, py, ox, oy;
     opponentController = new OpponentController();
     if(mp.is_server){
@@ -35,20 +36,19 @@ class MultiGamePanel extends GamePanel implements Runnable, Common, NetworkCallb
       py = map.col-2;
       ox = oy = 1;
     }
+    //爆弾とプレイヤー生成
     bombManager = new BombManager("image/bomb.png", "image/eff.png", map, this);
     p1 = new Player(px, py, "image/BMW.png", map, this, controller, network, bombManager);
     opponent = new Opponent(ox, oy, "image/BMR.png", map, this, opponentController);
+    //ゲームループ開始
     gameLoop = new Thread(this);
     gameLoop.start();
-
+    //通信開始
     network.start();
 
     if(mp.is_server){
       network.send(map.getNetworkMap());
     }
-
-    //情報受信ループ
-    //new Thread(new NetworkThread()).start();
   }
 
   public void playerCallback(NetworkPlayer player){

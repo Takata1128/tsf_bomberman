@@ -12,10 +12,11 @@ class SingleGamePanel extends GamePanel implements Runnable, Common{
     super(mp);
     this.mp = mp;
     controller = new KeyController();// キーコントローラー生成
+    mp.network=null;//networkをnullに
     // キー入力受付
     setFocusable(true);
     addKeyListener(controller);
-    //サーバーかクライアントかによってプレイヤーの生成位置を決定
+    //マップと爆弾、プレイヤー生成
     map = new Map(this);
     bm1 = new BombManager("image/bomb.png", "image/eff.png", map, this);
     bm2 = new BombManager("image/bomb.png", "image/eff.png", map, this);

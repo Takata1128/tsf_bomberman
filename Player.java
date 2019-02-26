@@ -138,7 +138,6 @@ class Player implements Observer, Common {
   }
 
   public void draw(Graphics g) {
-    // テスト用 アイテムについて
     item = map.getItem(x, y);
     if (item == 1 || item == -1) {
       bm.setPow(item);
@@ -176,7 +175,6 @@ class Player implements Observer, Common {
         } else if (count == 1) {
           count = 0;
         }
-
         panel.repaint();
 
         // 300ミリ秒休止＝300ミリ秒おきにキャラクターの絵を切り替える
